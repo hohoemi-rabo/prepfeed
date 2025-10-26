@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { ExternalLink, Eye, ThumbsUp, MessageCircle, TrendingUp, Calendar, Zap } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { ExternalLink, Eye, ThumbsUp, MessageCircle, TrendingUp, Calendar, Zap, Hash } from 'lucide-react';
 import { YouTubeVideo } from '@/types';
 import Badge from './Badge';
 import { formatJapaneseNumber } from '@/lib/format-utils';
@@ -11,6 +12,8 @@ interface VideoCardProps {
 }
 
 export default function VideoCard({ video }: VideoCardProps) {
+  const router = useRouter();
+
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     const now = new Date();
@@ -43,9 +46,17 @@ export default function VideoCard({ video }: VideoCardProps) {
     window.open(`https://youtube.com/watch?v=${video.id}`, '_blank', 'noopener,noreferrer');
   };
 
+  const handleTagClick = (tag: string) => {
+    router.push(`/keyword/${encodeURIComponent(tag)}`);
+  };
+
   // バッジの判定（APIから計算済みのフラグを使用）
   const showNewBadge = video.isNew ?? false;
   const showTrendingBadge = video.isTrending ?? false;
+
+  // タグの最大表示数
+  const MAX_TAGS_DISPLAY = 8;
+  const displayTags = video.tags?.slice(0, MAX_TAGS_DISPLAY) || [];
 
   return (
     <div className="card hover:shadow-lg transition-all duration-200 group">
@@ -123,6 +134,31 @@ export default function VideoCard({ video }: VideoCardProps) {
                 <span className="text-gray-500">反応</span>
               </div>
             </div>
+
+            {/* タグセクション */}
+            {displayTags.length > 0 && (
+              <div className="mb-3">
+                <div className="flex items-start gap-2">
+                  <Hash className="w-4 h-4 text-gray-400 mt-1 flex-shrink-0" />
+                  <div className="flex flex-wrap gap-2">
+                    {displayTags.map((tag, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleTagClick(tag)}
+                        className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded hover:bg-[#00D4FF] hover:text-white dark:hover:bg-[#00D4FF] transition-colors"
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                    {video.tags && video.tags.length > MAX_TAGS_DISPLAY && (
+                      <span className="px-2 py-1 text-xs text-gray-500 dark:text-gray-400">
+                        +{video.tags.length - MAX_TAGS_DISPLAY}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* 分析データ */}
             <div className="mt-auto pt-3 border-t border-gray-200 dark:border-gray-700">
