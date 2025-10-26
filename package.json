@@ -1,6 +1,7 @@
 {
-  "name": "channel-scope",
+  "name": "youtube-scope",
   "version": "0.1.0",
+  "description": "YouTubeチャンネル分析とキーワード検索による動画企画支援ツール",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",

@@ -18,10 +18,10 @@ export default function Header() {
             </div>
             <div>
               <span className="text-xl font-bold text-gradient">
-                チャンネルスコープ
+                YouTubeスコープ
               </span>
               <p className="text-xs text-gray-600 dark:text-gray-400 -mt-1">
-                ChannelScope
+                YouTubeScope
               </p>
             </div>
           </Link>

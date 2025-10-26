@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { ArrowLeft, Shield, Eye, Database, Cookie } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'プライバシーポリシー | チャンネルスコープ',
-  description: 'チャンネルスコープのプライバシーポリシーと個人情報の取り扱いについて',
+  title: 'プライバシーポリシー | YouTubeスコープ',
+  description: 'YouTubeスコープのプライバシーポリシーと個人情報の取り扱いについて',
   robots: {
     index: false,
     follow: true,
@@ -27,7 +27,7 @@ export default function PrivacyPage() {
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold mb-4">プライバシーポリシー</h1>
         <p className="text-gray-600 dark:text-gray-400">
-          チャンネルスコープ（以下「本サービス」）における個人情報の取り扱いについて説明します。
+          YouTubeスコープ（以下「本サービス」）における個人情報の取り扱いについて説明します。
         </p>
       </div>
 

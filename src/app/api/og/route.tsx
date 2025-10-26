@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
                   alignItems: 'center',
                 }}
               >
-                📊 ChannelScope
+                📊 YouTubeScope
               </div>
             </div>
 

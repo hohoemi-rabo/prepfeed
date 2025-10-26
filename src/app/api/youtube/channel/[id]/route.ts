@@ -86,6 +86,7 @@ export async function GET(
 }
 
 // OPTIONSメソッドのサポート（CORS対応）
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
     status: 200,

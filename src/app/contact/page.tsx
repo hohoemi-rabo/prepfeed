@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { ArrowLeft, MessageCircle, Github, HelpCircle, ExternalLink, CheckCircle } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'お問い合わせ | チャンネルスコープ',
-  description: 'チャンネルスコープへのお問い合わせ方法とGitHub Issuesの使い方',
+  title: 'お問い合わせ | YouTubeスコープ',
+  description: 'YouTubeスコープへのお問い合わせ方法とGitHub Issuesの使い方',
 };
 
 export default function ContactPage() {
@@ -23,7 +23,7 @@ export default function ContactPage() {
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold mb-4">お問い合わせ</h1>
         <p className="text-gray-600 dark:text-gray-400">
-          チャンネルスコープに関するご質問、ご要望、不具合報告などをお気軽にお寄せください。
+          YouTubeスコープに関するご質問、ご要望、不具合報告などをお気軽にお寄せください。
         </p>
       </div>
 

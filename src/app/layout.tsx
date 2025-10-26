@@ -14,31 +14,31 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://channel-scope.verce
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "チャンネルスコープ - YouTubeチャンネル分析ツール",
-  description: "YouTubeチャンネルの成長を可視化する無料分析ツール。配信者のための簡単で使いやすいチャンネル分析サービス。",
-  keywords: ["YouTube", "分析", "チャンネル", "配信者", "動画", "統計"],
-  authors: [{ name: "ChannelScope" }],
+  title: "YouTubeスコープ - チャンネル分析とキーワード検索ツール",
+  description: "YouTubeチャンネル分析とキーワード検索で動画企画をサポート。配信者のための無料分析ツール。",
+  keywords: ["YouTube", "分析", "チャンネル", "配信者", "動画", "統計", "キーワード検索", "企画", "トレンド"],
+  authors: [{ name: "YouTubeScope" }],
   openGraph: {
     type: "website",
     locale: "ja_JP",
     url: "https://channel-scope.vercel.app",
-    title: "チャンネルスコープ",
-    description: "YouTubeチャンネルの成長を可視化する無料分析ツール",
-    siteName: "チャンネルスコープ",
+    title: "YouTubeスコープ",
+    description: "YouTubeチャンネル分析とキーワード検索で動画企画をサポート",
+    siteName: "YouTubeスコープ",
     images: [
       {
-        url: "/api/og?channel=ChannelScope&subscribers=0&videos=0&views=0",
+        url: "/api/og?channel=YouTubeScope&subscribers=0&videos=0&views=0",
         width: 1200,
         height: 630,
-        alt: "チャンネルスコープ - YouTubeチャンネル分析ツール",
+        alt: "YouTubeスコープ - チャンネル分析とキーワード検索ツール",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "チャンネルスコープ",
-    description: "YouTubeチャンネルの成長を可視化する無料分析ツール",
-    images: ["/api/og?channel=ChannelScope&subscribers=0&videos=0&views=0"],
+    title: "YouTubeスコープ",
+    description: "YouTubeチャンネル分析とキーワード検索で動画企画をサポート",
+    images: ["/api/og?channel=YouTubeScope&subscribers=0&videos=0&views=0"],
   },
 };
 

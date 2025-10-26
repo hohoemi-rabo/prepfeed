@@ -79,6 +79,7 @@ export function getSortOrderDisplayName(
 /**
  * デフォルトのソート順序を取得
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function getDefaultSortOrder(_sortType: SortType): SortOrder {
   // 投稿日は新しい順がデフォルト、それ以外は高い順がデフォルト
   return 'desc';

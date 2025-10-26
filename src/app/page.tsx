@@ -34,14 +34,14 @@ export default function Home() {
         <div className="container-custom">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="text-gradient">チャンネルスコープ</span>で
+              <span className="text-gradient">YouTubeスコープ</span>で
               <br />
-              YouTubeチャンネルを分析
+              動画企画をサポート
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
               配信者のための無料分析ツール。
               <br />
-              チャンネルの成長を可視化し、次の一手を見つけましょう。
+              チャンネル分析とキーワード検索で、次の一手を見つけましょう。
             </p>
 
             {/* 検索フォーム */}
@@ -70,7 +70,7 @@ export default function Home() {
       <section className="py-20">
         <div className="container-custom">
           <h2 className="text-3xl font-bold text-center mb-12">
-            チャンネルスコープの特徴
+            YouTubeスコープの特徴
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

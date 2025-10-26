@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { ArrowLeft, AlertTriangle, Info, Shield } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: '免責事項 | チャンネルスコープ',
-  description: 'チャンネルスコープの免責事項とサービス利用に関する注意事項',
+  title: '免責事項 | YouTubeスコープ',
+  description: 'YouTubeスコープの免責事項とサービス利用に関する注意事項',
   robots: {
     index: false,
     follow: true,
@@ -27,7 +27,7 @@ export default function DisclaimerPage() {
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold mb-4">免責事項</h1>
         <p className="text-gray-600 dark:text-gray-400">
-          チャンネルスコープ（以下「本サービス」）をご利用いただく前に、以下の免責事項をお読みください。
+          YouTubeスコープ（以下「本サービス」）をご利用いただく前に、以下の免責事項をお読みください。
         </p>
       </div>
 
