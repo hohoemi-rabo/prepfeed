@@ -38,7 +38,7 @@ User → SearchBar → API Routes → YouTube API Client → Cache Layer → You
 ```
 
 ### Key Technologies
-- **Next.js 15.5.4** - App Router, API Routes, Server/Client Components
+- **Next.js 15.5.7** - App Router, API Routes, Server/Client Components
 - **React 19.1.0** - UI Components
 - **TypeScript 5** - Strict mode
 - **Tailwind CSS 3.4.17** - Styling with CSS variables for theming
