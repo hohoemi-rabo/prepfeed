@@ -1,0 +1,36 @@
+---
+paths:
+  - "src/lib/youtube.ts"
+  - "src/lib/analytics.ts"
+  - "src/lib/cache.ts"
+  - "src/lib/tracking.ts"
+---
+
+# YouTube API 統合ルール
+
+## YouTube API Client (`lib/youtube.ts`)
+
+- Singleton pattern - single instance across requests
+- **Two-step video fetching**: playlistItems API → fallback to search API
+- Automatic analytics enrichment (growth rate, engagement, etc.)
+- **Keyword search**: search.list (100 units) + videos.list (50 units) = 150 units total
+- Comprehensive error handling and logging
+
+## Analytics Functions (`lib/analytics.ts`)
+
+- `calculateGrowthRate()` - views per day since publish
+- `isTrending()` - published within 7 days AND growth >= 10,000/day
+- `isNew()` - published within last 3 days
+- `calculateEngagementRate()` - (likes + comments) / views
+- `calculateCommentRate()` - comments / views (2 decimal)
+- `calculateLikeRate()` - likes / views (2 decimal)
+
+## Sorting (`lib/sort-utils.ts`)
+
+- `sortVideos(videos, sortType, sortOrder)` - main sorting logic
+- Smart defaults: date → desc (newest first), others → desc (highest first)
+
+## Tracking (`lib/tracking.ts`)
+
+Vercel Analytics event tracking:
+- `trackChannelSearch()`, `trackChannelView()`, `trackSortChange()`, `trackShare()`, `trackError()`
