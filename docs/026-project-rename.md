@@ -14,7 +14,7 @@ Phase 2 でマルチプラットフォーム（YouTube / Qiita / Zenn）対応�
 
 - [ ] `package.json` の name を `prepfeed` に変更
 - [ ] ページタイトル・メタデータを「PrepFeed」に更新
-- [ ] サブタイトル: 「分析はAIに任せる。その前だけ自動化。」
+- [ ] サブタイトル: 「集めて、分析して、ネタにする。」
 - [ ] `NEXT_PUBLIC_SITE_URL` を `https://prepfeed.vercel.app` に変更
 - [ ] OGP画像のブランディング更新
 - [ ] ファビコン更新（必要に応じて）

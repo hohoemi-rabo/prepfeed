@@ -6,7 +6,7 @@ Phase 2 で追加された全APIルート・バッチ処理のエラーハンド
 
 ## 背景
 
-Phase 2 で Qiita / Zenn / Google Sheets / バッチ処理など多くの外部連携が追加されたため、エラーハンドリングの網羅的な整備が必要。
+Phase 2 で Qiita / Zenn / Gemini AI / バッチ処理 / Google Sheets エクスポートなど多くの外部連携が追加されたため、エラーハンドリングの網羅的な整備が必要。
 
 ## 要件
 
@@ -16,8 +16,11 @@ Phase 2 で Qiita / Zenn / Google Sheets / バッチ処理など多くの外部�
 
 - [ ] `QIITA_API_ERROR` — Qiita APIのエラー
 - [ ] `ZENN_API_ERROR` — Zenn APIのエラー（仕様変更含む）
-- [ ] `GOOGLE_AUTH_ERROR` — Google OAuthトークンエラー
-- [ ] `GOOGLE_SHEETS_ERROR` — Google Sheets 書込エラー
+- [ ] `GEMINI_API_ERROR` — Gemini API呼び出しエラー
+- [ ] `GEMINI_PARSE_ERROR` — Gemini応答のJSONパースエラー
+- [ ] `ANALYSIS_TIMEOUT_ERROR` — 分析処理タイムアウト
+- [ ] `GOOGLE_AUTH_ERROR` — Google OAuthトークンエラー（エクスポート用）
+- [ ] `GOOGLE_SHEETS_ERROR` — Google Sheets エクスポートエラー
 - [ ] `BATCH_TIMEOUT_ERROR` — バッチ処理タイムアウト
 - [ ] `PREMIUM_REQUIRED` — 有料機能へのアクセス
 
@@ -25,8 +28,10 @@ Phase 2 で Qiita / Zenn / Google Sheets / バッチ処理など多くの外部�
 
 - [ ] Qiita API: レートリミット（1,000/時）超過、404
 - [ ] Zenn API: API仕様変更、レスポンス形式変更
-- [ ] Google OAuth: トークン期限切れ、リフレッシュ失敗、権限不足
-- [ ] Google Sheets: セル数上限、APIクォータ超過
+- [ ] Gemini API: レートリミット（15 RPM無料枠）、タイムアウト、不正JSON応答
+- [ ] 分析ジョブ: バックグラウンド処理失敗、ジョブステータス管理
+- [ ] Google OAuth: トークン期限切れ、リフレッシュ失敗（エクスポート時）
+- [ ] Google Sheets: セル数上限、APIクォータ超過（エクスポート時）
 - [ ] 監視設定API: バリデーションエラー、権限エラー
 - [ ] バッチ処理: 個別失敗の隔離、タイムアウト
 
@@ -51,7 +56,7 @@ Phase 2 で Qiita / Zenn / Google Sheets / バッチ処理など多くの外部�
 
 ## 依存関係
 
-- 032〜043 の各チケット完了後に横断的に実施
+- 032〜046 の各チケット完了後に横断的に実施
 
 ## 関連ファイル
 

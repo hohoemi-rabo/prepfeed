@@ -58,7 +58,8 @@
 ### 初回取得処理
 
 - [ ] 設定登録直後にデータ取得を実行
-- [ ] 取得結果を Google Sheets に書き込み
+- [ ] 取得結果を `collected_data` テーブルに Upsert
+- [ ] Gemini API で簡易分析を実行 → `analysis_results` に保存
 - [ ] `last_fetched_at` を更新
 - [ ] `fetch_logs` に記録
 - [ ] 失敗時もエラーログを記録（設定自体は保存）
@@ -76,9 +77,9 @@
 
 ## 依存関係
 
-- 028（Supabase DB — monitor_settings テーブル）
+- 028（Supabase DB — monitor_settings, collected_data テーブル）
 - 029（Supabase Auth — 認証必須）
-- 037（Google OAuth — Sheets書き込みに必要）
+- 037（Gemini AI分析 — 簡易分析実行）
 
 ## 関連ファイル
 
@@ -88,4 +89,4 @@
 
 ## 参照
 
-- phase2-requirements.md セクション 8.2（監視設定API）
+- phase2_v2-requirements.md セクション 7.2（監視設定API）

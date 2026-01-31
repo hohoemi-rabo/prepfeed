@@ -2,11 +2,11 @@
 
 ## 概要
 
-Phase 2 で必要となる全型定義を追加・更新する。Qiita / Zenn の記事型、プラットフォーム共通型、監視設定型、取得ログ型を定義する。
+Phase 2 で必要となる全型定義を追加・更新する。Qiita / Zenn の記事型、プラットフォーム共通型、監視設定型、AI分析型、収集データ型、取得ログ型を定義する。
 
 ## 背景
 
-マルチプラットフォーム対応と有料機能（監視・バッチ）のために、既存の型定義を大幅に拡張する必要がある。
+マルチプラットフォーム対応と有料機能（監視・バッチ・AI分析）のために、既存の型定義を大幅に拡張する必要がある。
 
 ## 要件
 
@@ -41,6 +41,20 @@ Phase 2 で必要となる全型定義を追加・更新する。Qiita / Zenn �
 
 - [ ] `UserProfile` インターフェース（id, email, display_name, avatar_url, spreadsheet_id, google_refresh_token, is_premium, created_at, updated_at）
 
+### 収集データ型
+
+- [ ] `CollectedData` インターフェース（id, user_id, setting_id, platform, content_id, title, url, published_at, author_id, author_name, views, likes, comments, stocks, duration, tags, growth_rate, collected_at）
+- [ ] ユニーク制約型: `(user_id, setting_id, content_id)`
+
+### AI分析型
+
+- [ ] `AnalysisType` 型: `'simple' | 'detailed'`
+- [ ] `JobStatus` 型: `'queued' | 'processing' | 'completed' | 'failed'`
+- [ ] `SimpleAnalysisResult` インターフェース（trend_score, summary, top_contents, keywords, generated_at）
+- [ ] `DetailedAnalysisResult` インターフェース（trend_analysis, content_ideas, competitor_analysis, recommendations, generated_at）
+- [ ] `AnalysisResult` インターフェース（id, user_id, setting_id?, analysis_type, status, result?, error_message?, created_at, completed_at?）
+- [ ] `AnalysisJob` インターフェース（id, user_id, analysis_id, job_type, status, priority, payload, started_at?, completed_at?, created_at）
+
 ### 既存型の更新
 
 - [ ] Qiita / Zenn 用の `SortType` 追加（`'likes' | 'date' | 'stocks'` 等）
@@ -62,3 +76,5 @@ Phase 2 で必要となる全型定義を追加・更新する。Qiita / Zenn �
 - `src/types/zenn.ts`（新規）
 - `src/types/monitor.ts`（新規）
 - `src/types/user.ts`（新規）
+- `src/types/analysis.ts`（新規）
+- `src/types/collected-data.ts`（新規）

@@ -80,5 +80,5 @@ Phase 2 で技術トレンドの収集対象として Qiita を追加する。Yo
 
 ## 参照
 
-- phase2-requirements.md セクション 8.2（Qiita API）
-- phase2-requirements.md セクション 12.2（Qiita API v2 仕様）
+- phase2_v2-requirements.md セクション 7.2（Qiita API）
+- phase2_v2-requirements.md セクション 13.3（Qiita API v2 仕様）

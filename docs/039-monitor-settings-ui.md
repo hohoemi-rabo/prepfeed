@@ -88,4 +88,4 @@
 
 ## 参照
 
-- phase2-requirements.md セクション 11.2（監視設定UIフロー）
+- phase2_v2-requirements.md セクション 12.5（監視設定追加フロー）

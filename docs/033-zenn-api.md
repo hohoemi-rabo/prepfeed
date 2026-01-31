@@ -81,8 +81,8 @@ Phase 2 で技術トレンドの収集対象として Zenn を追加する。非
 
 ## 参照
 
-- phase2-requirements.md セクション 8.2（Zenn API）
-- phase2-requirements.md セクション 12.3（Zenn 内部API仕様）
+- phase2_v2-requirements.md セクション 7.2（Zenn API）
+- phase2_v2-requirements.md セクション 13.4（Zenn 内部API仕様）
 
 ## 注意事項
 
