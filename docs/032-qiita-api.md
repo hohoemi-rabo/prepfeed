@@ -12,12 +12,12 @@ Phase 2 で技術トレンドの収集対象として Qiita を追加する。Yo
 
 ### Qiita APIクライアント（`lib/qiita.ts`）
 
-- [ ] シングルトンパターン
-- [ ] `QIITA_ACCESS_TOKEN` 環境変数対応（認証あり: 1,000リクエスト/時）
-- [ ] `getUserArticles(userId, limit)` — ユーザーの記事一覧取得
-- [ ] `searchArticles(keyword, limit)` — キーワード検索
-- [ ] 記事データへの分析指標付与（growth_rate, days_from_published）
-- [ ] エラーハンドリング（レートリミット、404等）
+- [x] シングルトンパターン
+- [x] `QIITA_ACCESS_TOKEN` 環境変数対応（認証あり: 1,000リクエスト/時）
+- [x] `getUserArticles(userId, limit)` — ユーザーの記事一覧取得
+- [x] `searchArticles(keyword, limit)` — キーワード検索
+- [x] 記事データへの分析指標付与（growth_rate, days_from_published）
+- [x] エラーハンドリング（レートリミット、404等）
 
 ### Qiita API外部仕様
 
@@ -30,17 +30,17 @@ Phase 2 で技術トレンドの収集対象として Qiita を追加する。Yo
 
 #### `/api/qiita/user/[id]` (GET)
 
-- [ ] ユーザーIDからプロフィール + 記事一覧を返す
-- [ ] クエリパラメータ: `limit`（デフォルト50）
-- [ ] キャッシュ: 30分 TTL
-- [ ] レートリミット適用
+- [x] ユーザーIDからプロフィール + 記事一覧を返す
+- [x] クエリパラメータ: `limit`（デフォルト50）
+- [x] キャッシュ: 30分 TTL
+- [x] レートリミット適用
 
 #### `/api/qiita/keyword` (GET)
 
-- [ ] キーワードで記事検索
-- [ ] クエリパラメータ: `q`, `limit`（デフォルト50）
-- [ ] キャッシュ: 30分 TTL
-- [ ] レートリミット適用
+- [x] キーワードで記事検索
+- [x] クエリパラメータ: `q`, `limit`（デフォルト50）
+- [x] キャッシュ: 30分 TTL
+- [x] レートリミット適用
 
 ### レスポンス形式
 
@@ -61,12 +61,12 @@ Phase 2 で技術トレンドの収集対象として Qiita を追加する。Yo
 
 ## 受け入れ条件
 
-- [ ] `/api/qiita/user/[id]` でユーザー記事が取得できる
-- [ ] `/api/qiita/keyword?q=React` でキーワード検索結果が返る
-- [ ] 各記事に `days_from_published`, `growth_rate` が付与されている
-- [ ] キャッシュが機能している（2回目のリクエストが高速）
-- [ ] レートリミットが適用されている
-- [ ] 存在しないユーザーIDで適切なエラーレスポンスが返る
+- [x] `/api/qiita/user/[id]` でユーザー記事が取得できる
+- [x] `/api/qiita/keyword?q=React` でキーワード検索結果が返る
+- [x] 各記事に `days_from_published`, `growth_rate` が付与されている
+- [x] キャッシュが機能している（2回目のリクエストが高速）
+- [x] レートリミットが適用されている
+- [x] 存在しないユーザーIDで適切なエラーレスポンスが返る
 
 ## 依存関係
 
