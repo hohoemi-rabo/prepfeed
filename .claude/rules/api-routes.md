@@ -20,7 +20,7 @@ paths:
 
 - **Production**: Vercel KV with 30-minute TTL
 - **Development**: In-memory Map with automatic cleanup
-- Cache key format: `channel-scope:{prefix}:{id}`
+- Cache key format: `prepfeed:{prefix}:{id}`
 - HTTP cache headers: `s-maxage=1800, stale-while-revalidate=3600`
 
 ## Rate Limiting (`lib/rate-limiter.ts`)

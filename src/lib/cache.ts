@@ -30,7 +30,7 @@ function isVercelKVAvailable(): boolean {
  * キャッシュキーを生成
  */
 export function generateCacheKey(prefix: string, identifier: string): string {
-  return `channel-scope:${prefix}:${identifier}`;
+  return `prepfeed:${prefix}:${identifier}`;
 }
 
 /**

@@ -23,7 +23,7 @@ export default function ShareButton({ channel, videos }: ShareButtonProps) {
     const url = typeof window !== 'undefined' ? window.location.href : '';
 
     // X（Twitter）シェアURLを生成
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(url)}&hashtags=チャンネルスコープ`;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(url)}&hashtags=PrepFeed`;
 
     // アナリティクストラッキング
     trackShare(channel.title, 'twitter');

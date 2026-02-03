@@ -10,35 +10,35 @@ const notoSansJP = Noto_Sans_JP({
   variable: "--font-noto-sans-jp",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://channel-scope.vercel.app';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://prepfeed.vercel.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "YouTubeスコープ - チャンネル分析とキーワード検索ツール",
-  description: "YouTubeチャンネル分析とキーワード検索で動画企画をサポート。配信者のための無料分析ツール。",
-  keywords: ["YouTube", "分析", "チャンネル", "配信者", "動画", "統計", "キーワード検索", "企画", "トレンド"],
-  authors: [{ name: "YouTubeScope" }],
+  title: "PrepFeed - 集めて、分析して、ネタにする。",
+  description: "YouTube・Qiita・Zennのコンテンツ分析で企画のネタ出しをサポート。無料の分析ツール。",
+  keywords: ["YouTube", "Qiita", "Zenn", "分析", "動画", "記事", "企画", "トレンド", "ネタ出し"],
+  authors: [{ name: "PrepFeed" }],
   openGraph: {
     type: "website",
     locale: "ja_JP",
-    url: "https://channel-scope.vercel.app",
-    title: "YouTubeスコープ",
-    description: "YouTubeチャンネル分析とキーワード検索で動画企画をサポート",
-    siteName: "YouTubeスコープ",
+    url: "https://prepfeed.vercel.app",
+    title: "PrepFeed",
+    description: "集めて、分析して、ネタにする。",
+    siteName: "PrepFeed",
     images: [
       {
-        url: "/api/og?channel=YouTubeScope&subscribers=0&videos=0&views=0",
+        url: "/api/og?channel=PrepFeed&subscribers=0&videos=0&views=0",
         width: 1200,
         height: 630,
-        alt: "YouTubeスコープ - チャンネル分析とキーワード検索ツール",
+        alt: "PrepFeed - 集めて、分析して、ネタにする。",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "YouTubeスコープ",
-    description: "YouTubeチャンネル分析とキーワード検索で動画企画をサポート",
-    images: ["/api/og?channel=YouTubeScope&subscribers=0&videos=0&views=0"],
+    title: "PrepFeed",
+    description: "集めて、分析して、ネタにする。",
+    images: ["/api/og?channel=PrepFeed&subscribers=0&videos=0&views=0"],
   },
 };
 

@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { ArrowLeft, AlertTriangle, Info, Shield } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: '免責事項 | YouTubeスコープ',
-  description: 'YouTubeスコープの免責事項とサービス利用に関する注意事項',
+  title: '免責事項 | PrepFeed',
+  description: 'PrepFeedの免責事項とサービス利用に関する注意事項',
   robots: {
     index: false,
     follow: true,
@@ -27,7 +27,7 @@ export default function DisclaimerPage() {
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold mb-4">免責事項</h1>
         <p className="text-gray-600 dark:text-gray-400">
-          YouTubeスコープ（以下「本サービス」）をご利用いただく前に、以下の免責事項をお読みください。
+          PrepFeed（以下「本サービス」）をご利用いただく前に、以下の免責事項をお読みください。
         </p>
       </div>
 
@@ -184,7 +184,7 @@ export default function DisclaimerPage() {
             本サービスに関するご質問やご意見は、GitHubのIssuesよりお問い合わせください。
           </p>
           <a
-            href="https://github.com/hohoemi-rabo/channel-scope/issues"
+            href="https://github.com/hohoemi-rabo/prepfeed/issues"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-[#FF0000] hover:underline font-medium"

@@ -47,7 +47,7 @@ export default function VideoCard({ video }: VideoCardProps) {
   };
 
   const handleTagClick = (tag: string) => {
-    router.push(`/keyword/${encodeURIComponent(tag)}`);
+    router.push(`/youtube/keyword/${encodeURIComponent(tag)}`);
   };
 
   // バッジの判定（APIから計算済みのフラグを使用）

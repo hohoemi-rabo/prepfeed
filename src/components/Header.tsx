@@ -25,10 +25,10 @@ export default function Header() {
             </div>
             <div>
               <span className="text-xl font-bold text-gradient">
-                YouTubeスコープ
+                PrepFeed
               </span>
               <p className="text-xs text-gray-600 dark:text-gray-400 -mt-1">
-                YouTubeScope
+                集めて、分析して、ネタにする。
               </p>
             </div>
           </Link>
@@ -36,7 +36,7 @@ export default function Header() {
           {/* キャッチコピー（デスクトップ） */}
           <div className="hidden md:block">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              配信者のための無料分析ツール
+              集めて、分析して、ネタにする。
             </p>
           </div>
 
@@ -76,7 +76,7 @@ export default function Header() {
                 <Instagram className="w-5 h-5" />
               </a>
               <a
-                href="https://github.com/hohoemi-rabo/youtube-scope"
+                href="https://github.com/hohoemi-rabo/prepfeed"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 text-gray-600 dark:text-gray-400 hover:text-[#333] dark:hover:text-white transition-colors"
@@ -161,7 +161,7 @@ export default function Header() {
                   <Instagram className="w-6 h-6" />
                 </a>
                 <a
-                  href="https://github.com/hohoemi-rabo/youtube-scope"
+                  href="https://github.com/hohoemi-rabo/prepfeed"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-2 text-gray-600 dark:text-gray-400 hover:text-[#333] dark:hover:text-white transition-colors"
@@ -173,7 +173,7 @@ export default function Header() {
             </div>
 
             <p className="mt-4 px-4 text-xs text-gray-600 dark:text-gray-400">
-              配信者のための無料分析ツール
+              集めて、分析して、ネタにする。
             </p>
           </div>
         )}

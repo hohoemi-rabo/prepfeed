@@ -22,7 +22,7 @@ export default function KeywordSearchPage() {
   // ページタイトルを設定
   useEffect(() => {
     if (query) {
-      document.title = `「${query}」の検索結果 | YouTubeスコープ`;
+      document.title = `「${query}」の検索結果 | PrepFeed`;
     }
   }, [query]);
 
@@ -61,7 +61,7 @@ export default function KeywordSearchPage() {
   const handleKeywordSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (keywordQuery.trim()) {
-      router.push(`/keyword/${encodeURIComponent(keywordQuery.trim())}`);
+      router.push(`/youtube/keyword/${encodeURIComponent(keywordQuery.trim())}`);
     }
   };
 

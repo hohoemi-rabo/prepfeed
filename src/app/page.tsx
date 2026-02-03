@@ -36,7 +36,7 @@ export default function Home() {
   const handleKeywordSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (keywordQuery.trim()) {
-      router.push(`/keyword/${encodeURIComponent(keywordQuery.trim())}`);
+      router.push(`/youtube/keyword/${encodeURIComponent(keywordQuery.trim())}`);
     }
   };
 
@@ -47,14 +47,14 @@ export default function Home() {
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="text-gradient">YouTubeスコープ</span>で
+              <span className="text-gradient">PrepFeed</span>で
               <br />
-              動画企画をサポート
+              ネタ出しをサポート
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-400">
-              配信者のための無料分析ツール。
+              集めて、分析して、ネタにする。
               <br />
-              チャンネル分析とキーワード検索で、次の一手を見つけましょう。
+              YouTube・Qiita・Zennの分析で、次のネタを見つけましょう。
             </p>
           </div>
 
@@ -79,13 +79,13 @@ export default function Home() {
               <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
                 <span>人気: </span>
                 <button
-                  onClick={() => router.push('/channel/UClRNDVoLt5IRfLg_LsXjwvw')}
+                  onClick={() => router.push('/youtube/channel/UClRNDVoLt5IRfLg_LsXjwvw')}
                   className="underline hover:text-[#FF0000] transition-colors mx-1"
                 >
                   HIKAKIN TV
                 </button>
                 <button
-                  onClick={() => router.push('/channel/UCgMPP6RRjktV7krOfyUewqw')}
+                  onClick={() => router.push('/youtube/channel/UCgMPP6RRjktV7krOfyUewqw')}
                   className="underline hover:text-[#FF0000] transition-colors mx-1"
                 >
                   はじめしゃちょー
@@ -131,19 +131,19 @@ export default function Home() {
               <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
                 <span>例: </span>
                 <button
-                  onClick={() => router.push('/keyword/プログラミング')}
+                  onClick={() => router.push('/youtube/keyword/プログラミング')}
                   className="underline hover:text-[#00D4FF] transition-colors mx-1"
                 >
                   プログラミング
                 </button>
                 <button
-                  onClick={() => router.push('/keyword/料理')}
+                  onClick={() => router.push('/youtube/keyword/料理')}
                   className="underline hover:text-[#00D4FF] transition-colors mx-1"
                 >
                   料理
                 </button>
                 <button
-                  onClick={() => router.push('/keyword/ゲーム実況')}
+                  onClick={() => router.push('/youtube/keyword/ゲーム実況')}
                   className="underline hover:text-[#00D4FF] transition-colors mx-1"
                 >
                   ゲーム実況
@@ -158,7 +158,7 @@ export default function Home() {
       <section className="py-20">
         <div className="container-custom">
           <h2 className="text-3xl font-bold text-center mb-12">
-            YouTubeスコープの特徴
+            PrepFeedの特徴
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { ArrowLeft, Shield, Eye, Database, Cookie } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'プライバシーポリシー | YouTubeスコープ',
-  description: 'YouTubeスコープのプライバシーポリシーと個人情報の取り扱いについて',
+  title: 'プライバシーポリシー | PrepFeed',
+  description: 'PrepFeedのプライバシーポリシーと個人情報の取り扱いについて',
   robots: {
     index: false,
     follow: true,
@@ -27,7 +27,7 @@ export default function PrivacyPage() {
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold mb-4">プライバシーポリシー</h1>
         <p className="text-gray-600 dark:text-gray-400">
-          YouTubeスコープ（以下「本サービス」）における個人情報の取り扱いについて説明します。
+          PrepFeed（以下「本サービス」）における個人情報の取り扱いについて説明します。
         </p>
       </div>
 
@@ -197,7 +197,7 @@ export default function PrivacyPage() {
             本プライバシーポリシーに関するご質問は、GitHubのIssuesよりお問い合わせください。
           </p>
           <a
-            href="https://github.com/hohoemi-rabo/channel-scope/issues"
+            href="https://github.com/hohoemi-rabo/prepfeed/issues"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-[#FF0000] hover:underline font-medium"

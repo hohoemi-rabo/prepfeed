@@ -1,6 +1,20 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      {
+        source: '/channel/:id',
+        destination: '/youtube/channel/:id',
+        permanent: true,
+      },
+      {
+        source: '/keyword/:query',
+        destination: '/youtube/keyword/:query',
+        permanent: true,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

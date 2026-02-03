@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { ArrowLeft, MessageCircle, Github, HelpCircle, ExternalLink, CheckCircle, Instagram } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'お問い合わせ | YouTubeスコープ',
-  description: 'YouTubeスコープへのお問い合わせ方法。GitHub IssuesまたはInstagramダイレクトメッセージでお気軽にどうぞ。',
+  title: 'お問い合わせ | PrepFeed',
+  description: 'PrepFeedへのお問い合わせ方法。GitHub IssuesまたはInstagramダイレクトメッセージでお気軽にどうぞ。',
 };
 
 export default function ContactPage() {
@@ -23,7 +23,7 @@ export default function ContactPage() {
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold mb-4">お問い合わせ</h1>
         <p className="text-gray-600 dark:text-gray-400">
-          YouTubeスコープに関するご質問、ご要望、不具合報告などをお気軽にお寄せください。
+          PrepFeedに関するご質問、ご要望、不具合報告などをお気軽にお寄せください。
         </p>
       </div>
 
@@ -46,7 +46,7 @@ export default function ContactPage() {
               </div>
               <div className="mt-auto">
                 <a
-                  href="https://github.com/hohoemi-rabo/youtube-scope/issues"
+                  href="https://github.com/hohoemi-rabo/prepfeed/issues"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full px-4 py-3 bg-white text-gray-900 rounded-lg font-bold hover:bg-gray-100 transition-colors flex items-center justify-center gap-2"
@@ -130,7 +130,7 @@ export default function ContactPage() {
                 下記のボタンをクリックして、GitHub Issuesのページを開きます。
               </p>
               <a
-                href="https://github.com/hohoemi-rabo/youtube-scope/issues"
+                href="https://github.com/hohoemi-rabo/prepfeed/issues"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg hover:opacity-80 transition-opacity"
@@ -293,7 +293,7 @@ export default function ContactPage() {
           <h2 className="text-2xl font-bold mb-4">今すぐお問い合わせ</h2>
           <div className="grid md:grid-cols-2 gap-4 max-w-3xl mx-auto">
             <a
-              href="https://github.com/hohoemi-rabo/youtube-scope/issues"
+              href="https://github.com/hohoemi-rabo/prepfeed/issues"
               target="_blank"
               rel="noopener noreferrer"
               className="flex flex-col items-center gap-2 px-6 py-6 bg-gradient-to-br from-gray-900 to-gray-700 dark:from-gray-800 dark:to-gray-900 text-white rounded-lg font-bold text-lg hover:opacity-90 transition-opacity"

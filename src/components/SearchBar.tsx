@@ -108,7 +108,7 @@ export default function SearchBar({ className = '', autoFocus = false }: SearchB
     setShowDropdown(false);
     setSelectedIndex(-1);
     // チャンネル詳細ページへ遷移
-    router.push(`/channel/${channel.id}`);
+    router.push(`/youtube/channel/${channel.id}`);
   };
 
   // キーボード操作

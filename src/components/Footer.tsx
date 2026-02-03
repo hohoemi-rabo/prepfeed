@@ -18,11 +18,10 @@ export default function Footer() {
           {/* サービス情報 */}
           <div>
             <h3 className="text-lg font-bold mb-4 text-gradient">
-              YouTubeスコープ
+              PrepFeed
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              YouTubeチャンネル分析とキーワード検索で動画企画をサポート。
-              配信者の皆様の成長を応援します。
+              YouTube・Qiita・Zennの分析で企画のネタ出しをサポート。
             </p>
             <div className="flex space-x-4">
               <a
@@ -44,7 +43,7 @@ export default function Footer() {
                 <Instagram className="w-5 h-5" />
               </a>
               <a
-                href="https://github.com/hohoemi-rabo/youtube-scope"
+                href="https://github.com/hohoemi-rabo/prepfeed"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-600 dark:text-gray-400 hover:text-[#333] dark:hover:text-white transition-colors"
@@ -109,7 +108,7 @@ export default function Footer() {
         {/* コピーライト */}
         <div className="mt-8 pt-8 border-t border-[#e5e5e5] dark:border-[#2a2a2a]">
           <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-            © {currentYear} YouTubeスコープ. All rights reserved.
+            © {currentYear} PrepFeed. All rights reserved.
           </p>
         </div>
       </div>

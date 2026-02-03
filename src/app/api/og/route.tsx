@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
                   alignItems: 'center',
                 }}
               >
-                📊 YouTubeScope
+                PrepFeed
               </div>
             </div>
 
@@ -185,7 +185,7 @@ export async function GET(request: NextRequest) {
                 textAlign: 'center',
               }}
             >
-              YouTubeチャンネルの成長を可視化
+              集めて、分析して、ネタにする。
             </div>
           </div>
         </div>

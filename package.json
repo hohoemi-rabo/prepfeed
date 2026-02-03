@@ -1,7 +1,7 @@
 {
-  "name": "youtube-scope",
+  "name": "prepfeed",
   "version": "0.1.0",
-  "description": "YouTubeチャンネル分析とキーワード検索による動画企画支援ツール",
+  "description": "YouTube・Qiita・Zennの分析で企画のネタ出しをサポートするツール",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",

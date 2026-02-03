@@ -5,11 +5,11 @@ Domain-specific rules are in `.claude/rules/` and loaded conditionally by file p
 
 ## Project Overview
 
-**YouTubeスコープ (YouTubeScope)** - YouTubeチャンネル分析とキーワード検索による動画企画支援ツール
+**PrepFeed** - YouTube・Qiita・Zennの分析で企画のネタ出しをサポートするツール
 
-Next.js 15 (App Router) + React 19 + TypeScript + Tailwind CSSで構築されたフルスタックWebアプリケーション。YouTube Data API v3を使用してチャンネル分析・キーワード検索による動画統計を提供。
+Next.js 15 (App Router) + React 19 + TypeScript + Tailwind CSSで構築されたフルスタックWebアプリケーション。YouTube Data API v3を使用してチャンネル分析・キーワード検索による動画統計を提供。Phase 2でQiita/Zenn対応とGemini AI分析を追加予定。
 
-**旧名称**: チャンネルスコープ（Phase 5でYouTubeスコープに改名）
+**旧名称**: チャンネルスコープ → YouTubeスコープ → PrepFeed
 
 ## Essential Commands
 
@@ -41,8 +41,8 @@ npm run lint       # Run ESLint
 ├── app/                    # Next.js App Router
 │   ├── api/youtube/        # YouTube API (search, channel/[id], keyword)
 │   ├── api/og/             # Dynamic OGP image generation
-│   ├── channel/[id]/       # Channel detail page
-│   ├── keyword/[query]/    # Keyword search results page
+│   ├── youtube/channel/[id]/   # Channel detail page
+│   ├── youtube/keyword/[query]/ # Keyword search results page
 │   ├── contact/            # Contact page
 │   ├── disclaimer/         # Disclaimer page
 │   ├── privacy/            # Privacy policy
@@ -57,11 +57,11 @@ npm run lint       # Run ESLint
 ## Two Search Methods
 
 ### 1. Channel Analysis
-- Page: `/` → `/channel/[id]` | UI: Red gradient | API: search → channel/[id]
+- Page: `/` → `/youtube/channel/[id]` | UI: Red gradient | API: search → channel/[id]
 - Features: Latest 50 videos, charts, SNS sharing
 
 ### 2. Keyword Search
-- Page: `/` → `/keyword/[query]` | UI: Blue gradient | API: keyword?q=
+- Page: `/` → `/youtube/keyword/[query]` | UI: Blue gradient | API: keyword?q=
 - Features: Top 50 videos by views, tags display
 - **Important**: Uses dedicated input (NOT SearchBar component)
 
@@ -82,7 +82,7 @@ KV_REST_API_TOKEN=...      # Vercel KV
 ## Production Deployment
 
 - **Platform**: Vercel | **Region**: hnd1 (Tokyo)
-- **URL**: https://channel-scope.vercel.app
+- **URL**: https://prepfeed.vercel.app
 
 ## Project Status
 
