@@ -42,19 +42,31 @@ export const metadata: Metadata = {
   },
 };
 
+import { createClient } from '@/lib/supabase/server';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const headerUser = user
+    ? {
+        email: user.email ?? '',
+        avatarUrl: user.user_metadata?.avatar_url as string | undefined,
+        displayName: user.user_metadata?.full_name as string | undefined,
+      }
+    : null;
+
   return (
     <html lang="ja">
       <body className={`${notoSansJP.variable} font-sans antialiased`}>
         <div className="flex flex-col min-h-screen">
-          <Header />
+          <Header user={headerUser} />
           <main className="flex-grow">
             {children}
           </main>

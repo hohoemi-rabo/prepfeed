@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { Search, Instagram, Github } from 'lucide-react';
+import { Search, Instagram, Github, LogIn } from 'lucide-react';
 import { useState } from 'react';
+import UserMenu from './UserMenu';
 
 // Xアイコン（カスタムSVG）
 const XIcon = ({ className }: { className?: string }) => (
@@ -11,7 +12,17 @@ const XIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export default function Header() {
+interface HeaderUser {
+  email: string;
+  avatarUrl?: string;
+  displayName?: string;
+}
+
+interface HeaderProps {
+  user?: HeaderUser | null;
+}
+
+export default function Header({ user }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -85,37 +96,74 @@ export default function Header() {
                 <Github className="w-5 h-5" />
               </a>
             </div>
-          </nav>
 
-          {/* モバイルメニューボタン */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="メニュー"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              {isMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
+            {/* Auth */}
+            <div className="ml-2 pl-2 border-l border-gray-300 dark:border-gray-600">
+              {user ? (
+                <UserMenu
+                  email={user.email}
+                  avatarUrl={user.avatarUrl}
+                  displayName={user.displayName}
                 />
               ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+                <Link
+                  href="/auth/login"
+                  className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#FF0000] to-[#00D4FF] rounded-lg hover:opacity-90 transition-opacity"
+                >
+                  <LogIn className="w-4 h-4" />
+                  ログイン
+                </Link>
               )}
-            </svg>
-          </button>
+            </div>
+          </nav>
+
+          {/* モバイル: Auth + メニューボタン */}
+          <div className="md:hidden flex items-center gap-2">
+            {user ? (
+              <UserMenu
+                email={user.email}
+                avatarUrl={user.avatarUrl}
+                displayName={user.displayName}
+              />
+            ) : (
+              <Link
+                href="/auth/login"
+                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-[#FF0000] to-[#00D4FF] rounded-lg hover:opacity-90 transition-opacity"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                ログイン
+              </Link>
+            )}
+
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              aria-label="メニュー"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {isMenuOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* モバイルメニュー */}
@@ -129,6 +177,15 @@ export default function Header() {
               >
                 ホーム
               </Link>
+              {user && (
+                <Link
+                  href="/dashboard"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  ダッシュボード
+                </Link>
+              )}
               <Link
                 href="/contact"
                 className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
