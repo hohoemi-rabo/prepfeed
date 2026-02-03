@@ -68,14 +68,6 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/about"
-                  className="text-sm text-gray-600 dark:text-gray-400 hover:text-[#FF0000] transition-colors"
-                >
-                  使い方
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/disclaimer"
                   className="text-sm text-gray-600 dark:text-gray-400 hover:text-[#FF0000] transition-colors"
                 >
@@ -97,8 +89,8 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-bold mb-4">ご利用にあたって</h3>
             <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-              本サービスはYouTubeの公開データを利用した参考値を提供します。
-              本サービスはYouTube及びGoogle LLCと提携していません。
+              本サービスはYouTube・Qiita・Zennの公開データを利用した参考値を提供します。
+              本サービスはGoogle LLC・Qiita株式会社・クラスメソッド株式会社と提携していません。
               データの正確性・完全性は保証いたしません。
               分析結果は参考情報としてご利用ください。
             </p>

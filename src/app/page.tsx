@@ -1,43 +1,66 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, TrendingUp, BarChart3, Users, Hash } from 'lucide-react';
+import {
+  Search,
+  TrendingUp,
+  BarChart3,
+  Users,
+  Hash,
+  Bell,
+  Sparkles,
+  Layers,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import SearchBar from '@/components/SearchBar';
 
+type Platform = 'youtube' | 'qiita' | 'zenn';
+
+const PLATFORMS = [
+  {
+    id: 'youtube' as Platform,
+    label: 'YouTube',
+    color: '#FF0000',
+    colorDark: '#CC0000',
+  },
+  {
+    id: 'qiita' as Platform,
+    label: 'Qiita',
+    color: '#55C500',
+    colorDark: '#449E00',
+  },
+  {
+    id: 'zenn' as Platform,
+    label: 'Zenn',
+    color: '#3EA8FF',
+    colorDark: '#2B8AD9',
+  },
+] as const;
+
 export default function Home() {
   const router = useRouter();
+  const [platform, setPlatform] = useState<Platform>('youtube');
   const [keywordQuery, setKeywordQuery] = useState('');
+  const [userQuery, setUserQuery] = useState('');
 
-  const features = [
-    {
-      icon: <Users className="w-6 h-6" />,
-      title: 'チャンネル分析',
-      description: 'チャンネル名で検索して、最新50本の動画を詳細に分析します。',
-    },
-    {
-      icon: <Hash className="w-6 h-6" />,
-      title: 'キーワード検索',
-      description: 'キーワードで人気動画を検索し、動画企画のヒントを発見します。',
-    },
-    {
-      icon: <TrendingUp className="w-6 h-6" />,
-      title: '成長分析',
-      description: '動画の伸び率や急上昇トレンドを可視化します。',
-    },
-    {
-      icon: <BarChart3 className="w-6 h-6" />,
-      title: '詳細な統計',
-      description: '再生数、コメント率、いいね率など多角的な分析が可能です。',
-    },
-  ];
+  const current = PLATFORMS.find((p) => p.id === platform)!;
 
-  // キーワード検索を実行
   const handleKeywordSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (keywordQuery.trim()) {
-      router.push(`/youtube/keyword/${encodeURIComponent(keywordQuery.trim())}`);
+    if (!keywordQuery.trim()) return;
+    const q = encodeURIComponent(keywordQuery.trim());
+    if (platform === 'youtube') {
+      router.push(`/youtube/keyword/${q}`);
+    } else {
+      router.push(`/${platform}/keyword/${q}`);
     }
+  };
+
+  const handleUserSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userQuery.trim()) return;
+    const q = encodeURIComponent(userQuery.trim());
+    router.push(`/${platform}/user/${q}`);
   };
 
   return (
@@ -58,51 +81,191 @@ export default function Home() {
             </p>
           </div>
 
-          {/* 2つの検索カード */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            {/* チャンネル分析カード */}
-            <div className="card hover:shadow-xl transition-all duration-300">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-[#FF0000] to-[#CC0000] rounded-lg flex items-center justify-center">
-                  <Users className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold">チャンネル分析</h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    最新50本の動画を分析
-                  </p>
-                </div>
-              </div>
-
-              <SearchBar />
-
-              <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
-                <span>人気: </span>
+          {/* プラットフォームタブ */}
+          <div className="flex justify-center mb-8">
+            <div className="inline-flex rounded-lg border border-[#e5e5e5] dark:border-[#2a2a2a] bg-white dark:bg-[#1a1a1a] p-1">
+              {PLATFORMS.map((p) => (
                 <button
-                  onClick={() => router.push('/youtube/channel/UClRNDVoLt5IRfLg_LsXjwvw')}
-                  className="underline hover:text-[#FF0000] transition-colors mx-1"
+                  key={p.id}
+                  onClick={() => {
+                    setPlatform(p.id);
+                    setKeywordQuery('');
+                    setUserQuery('');
+                  }}
+                  className={`px-5 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                    platform === p.id
+                      ? 'text-white shadow-sm'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                  }`}
+                  style={
+                    platform === p.id
+                      ? { backgroundColor: p.color }
+                      : undefined
+                  }
                 >
-                  HIKAKIN TV
+                  {p.label}
                 </button>
-                <button
-                  onClick={() => router.push('/youtube/channel/UCgMPP6RRjktV7krOfyUewqw')}
-                  className="underline hover:text-[#FF0000] transition-colors mx-1"
-                >
-                  はじめしゃちょー
-                </button>
-              </div>
+              ))}
             </div>
+          </div>
 
-            {/* キーワード検索カード */}
+          {/* 検索カード */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            {/* YouTube: チャンネル分析 / Qiita・Zenn: ユーザー検索 */}
+            {platform === 'youtube' ? (
+              <div className="card hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center gap-3 mb-4">
+                  <div
+                    className="w-12 h-12 rounded-lg flex items-center justify-center"
+                    style={{
+                      background: `linear-gradient(to right, ${current.color}, ${current.colorDark})`,
+                    }}
+                  >
+                    <Users className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold">チャンネル分析</h2>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      最新50本の動画を分析
+                    </p>
+                  </div>
+                </div>
+
+                <SearchBar />
+
+                <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
+                  <span>人気: </span>
+                  <button
+                    onClick={() =>
+                      router.push('/youtube/channel/UClRNDVoLt5IRfLg_LsXjwvw')
+                    }
+                    className="underline hover:text-[#FF0000] transition-colors mx-1"
+                  >
+                    HIKAKIN TV
+                  </button>
+                  <button
+                    onClick={() =>
+                      router.push('/youtube/channel/UCgMPP6RRjktV7krOfyUewqw')
+                    }
+                    className="underline hover:text-[#FF0000] transition-colors mx-1"
+                  >
+                    はじめしゃちょー
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="card hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center gap-3 mb-4">
+                  <div
+                    className="w-12 h-12 rounded-lg flex items-center justify-center"
+                    style={{
+                      background: `linear-gradient(to right, ${current.color}, ${current.colorDark})`,
+                    }}
+                  >
+                    <Users className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold">ユーザー検索</h2>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {platform === 'qiita'
+                        ? 'Qiitaユーザーの記事を分析'
+                        : 'Zennユーザーの記事を分析'}
+                    </p>
+                  </div>
+                </div>
+
+                <form onSubmit={handleUserSearch}>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={userQuery}
+                      onChange={(e) => setUserQuery(e.target.value)}
+                      placeholder={
+                        platform === 'qiita'
+                          ? 'Qiitaユーザー名を入力'
+                          : 'Zennユーザー名を入力'
+                      }
+                      className="w-full pl-12 pr-20 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200"
+                      style={
+                        {
+                          '--tw-ring-color': current.color,
+                        } as React.CSSProperties
+                      }
+                    />
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                      <Search className="w-5 h-5" />
+                    </div>
+                    <button
+                      type="submit"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 text-white rounded-md text-sm font-medium hover:opacity-90 transition-opacity"
+                      style={{
+                        background: `linear-gradient(to right, ${current.color}, ${current.colorDark})`,
+                      }}
+                    >
+                      検索
+                    </button>
+                  </div>
+                </form>
+
+                <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
+                  <span>例: </span>
+                  {platform === 'qiita' ? (
+                    <>
+                      <button
+                        onClick={() => router.push('/qiita/user/Qiita')}
+                        className="underline transition-colors mx-1 hover:text-[#55C500]"
+                      >
+                        Qiita
+                      </button>
+                      <button
+                        onClick={() => router.push('/qiita/user/jnchito')}
+                        className="underline transition-colors mx-1 hover:text-[#55C500]"
+                      >
+                        jnchito
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => router.push('/zenn/user/catnose99')}
+                        className="underline transition-colors mx-1 hover:text-[#3EA8FF]"
+                      >
+                        catnose99
+                      </button>
+                      <button
+                        onClick={() => router.push('/zenn/user/uhyo')}
+                        className="underline transition-colors mx-1 hover:text-[#3EA8FF]"
+                      >
+                        uhyo
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* キーワード検索カード（共通） */}
             <div className="card hover:shadow-xl transition-all duration-300">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-[#00D4FF] to-[#0099CC] rounded-lg flex items-center justify-center">
+                <div
+                  className="w-12 h-12 rounded-lg flex items-center justify-center"
+                  style={{
+                    background:
+                      platform === 'youtube'
+                        ? 'linear-gradient(to right, #00D4FF, #0099CC)'
+                        : `linear-gradient(to right, ${current.color}, ${current.colorDark})`,
+                  }}
+                >
                   <Hash className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h2 className="text-xl font-bold">キーワード検索</h2>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    人気動画から企画のヒント
+                    {platform === 'youtube'
+                      ? '人気動画から企画のヒント'
+                      : platform === 'qiita'
+                        ? '人気記事からトレンドを発見'
+                        : '人気記事からトレンドを発見'}
                   </p>
                 </div>
               </div>
@@ -114,14 +277,26 @@ export default function Home() {
                     value={keywordQuery}
                     onChange={(e) => setKeywordQuery(e.target.value)}
                     placeholder="検索キーワードを入力"
-                    className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] focus:border-transparent transition-all duration-200"
+                    className="w-full pl-12 pr-20 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200"
+                    style={
+                      {
+                        '--tw-ring-color':
+                          platform === 'youtube' ? '#00D4FF' : current.color,
+                      } as React.CSSProperties
+                    }
                   />
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
                     <Search className="w-5 h-5" />
                   </div>
                   <button
                     type="submit"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 bg-gradient-to-r from-[#00D4FF] to-[#0099CC] text-white rounded-md text-sm font-medium hover:opacity-90 transition-opacity"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 text-white rounded-md text-sm font-medium hover:opacity-90 transition-opacity"
+                    style={{
+                      background:
+                        platform === 'youtube'
+                          ? 'linear-gradient(to right, #00D4FF, #0099CC)'
+                          : `linear-gradient(to right, ${current.color}, ${current.colorDark})`,
+                    }}
                   >
                     検索
                   </button>
@@ -130,24 +305,76 @@ export default function Home() {
 
               <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
                 <span>例: </span>
-                <button
-                  onClick={() => router.push('/youtube/keyword/プログラミング')}
-                  className="underline hover:text-[#00D4FF] transition-colors mx-1"
-                >
-                  プログラミング
-                </button>
-                <button
-                  onClick={() => router.push('/youtube/keyword/料理')}
-                  className="underline hover:text-[#00D4FF] transition-colors mx-1"
-                >
-                  料理
-                </button>
-                <button
-                  onClick={() => router.push('/youtube/keyword/ゲーム実況')}
-                  className="underline hover:text-[#00D4FF] transition-colors mx-1"
-                >
-                  ゲーム実況
-                </button>
+                {platform === 'youtube' ? (
+                  <>
+                    <button
+                      onClick={() =>
+                        router.push('/youtube/keyword/プログラミング')
+                      }
+                      className="underline hover:text-[#00D4FF] transition-colors mx-1"
+                    >
+                      プログラミング
+                    </button>
+                    <button
+                      onClick={() => router.push('/youtube/keyword/料理')}
+                      className="underline hover:text-[#00D4FF] transition-colors mx-1"
+                    >
+                      料理
+                    </button>
+                    <button
+                      onClick={() =>
+                        router.push('/youtube/keyword/ゲーム実況')
+                      }
+                      className="underline hover:text-[#00D4FF] transition-colors mx-1"
+                    >
+                      ゲーム実況
+                    </button>
+                  </>
+                ) : platform === 'qiita' ? (
+                  <>
+                    <button
+                      onClick={() => router.push('/qiita/keyword/React')}
+                      className="underline hover:text-[#55C500] transition-colors mx-1"
+                    >
+                      React
+                    </button>
+                    <button
+                      onClick={() => router.push('/qiita/keyword/TypeScript')}
+                      className="underline hover:text-[#55C500] transition-colors mx-1"
+                    >
+                      TypeScript
+                    </button>
+                    <button
+                      onClick={() => router.push('/qiita/keyword/AI')}
+                      className="underline hover:text-[#55C500] transition-colors mx-1"
+                    >
+                      AI
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => router.push('/zenn/keyword/Next.js')}
+                      className="underline hover:text-[#3EA8FF] transition-colors mx-1"
+                    >
+                      Next.js
+                    </button>
+                    <button
+                      onClick={() => router.push('/zenn/keyword/Rust')}
+                      className="underline hover:text-[#3EA8FF] transition-colors mx-1"
+                    >
+                      Rust
+                    </button>
+                    <button
+                      onClick={() =>
+                        router.push('/zenn/keyword/インフラ')
+                      }
+                      className="underline hover:text-[#3EA8FF] transition-colors mx-1"
+                    >
+                      インフラ
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -162,7 +389,32 @@ export default function Home() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
+            {[
+              {
+                icon: <Layers className="w-6 h-6" />,
+                title: 'マルチプラットフォーム',
+                description:
+                  'YouTube・Qiita・Zennを横断して、コンテンツのトレンドを分析します。',
+              },
+              {
+                icon: <TrendingUp className="w-6 h-6" />,
+                title: 'トレンド分析',
+                description:
+                  'キーワードの人気度や成長率を可視化し、注目のテーマを発見します。',
+              },
+              {
+                icon: <Sparkles className="w-6 h-6" />,
+                title: 'AI分析',
+                description:
+                  'Gemini AIによるトレンドスコアリングとコンテンツ企画の提案。',
+              },
+              {
+                icon: <Bell className="w-6 h-6" />,
+                title: '監視・自動収集',
+                description:
+                  'キーワードやチャンネルを登録し、定期的にデータを自動収集します。',
+              },
+            ].map((feature, index) => (
               <div
                 key={index}
                 className="card hover:shadow-lg transition-shadow duration-200 animate-slide-up"
@@ -181,102 +433,79 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 使い方セクション */}
+      {/* 無料/有料機能セクション */}
       <section className="py-20 bg-[#f5f5f5] dark:bg-[#1a1a1a]">
         <div className="container-custom">
           <h2 className="text-3xl font-bold text-center mb-12">
-            2つの分析方法
+            無料で使える、もっと使える
           </h2>
 
           <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* チャンネル分析の流れ */}
+            {/* 無料機能 */}
             <div className="card">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-r from-[#FF0000] to-[#CC0000] rounded-lg flex items-center justify-center">
-                  <Users className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 bg-gradient-to-r from-gray-600 to-gray-800 rounded-lg flex items-center justify-center">
+                  <BarChart3 className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="text-xl font-bold">チャンネル分析</h3>
-              </div>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-[#FF0000] text-white rounded-full flex items-center justify-center text-sm font-bold">
-                    1
-                  </div>
-                  <div className="text-sm">
-                    <strong>チャンネル名を検索</strong>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">
-                      分析したいチャンネル名を入力
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-[#FF0000] text-white rounded-full flex items-center justify-center text-sm font-bold">
-                    2
-                  </div>
-                  <div className="text-sm">
-                    <strong>データを自動取得</strong>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">
-                      最新50本の動画データを取得
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-[#FF0000] text-white rounded-full flex items-center justify-center text-sm font-bold">
-                    3
-                  </div>
-                  <div className="text-sm">
-                    <strong>結果を確認</strong>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">
-                      グラフや統計で成長を可視化
-                    </p>
-                  </div>
+                <div>
+                  <h3 className="text-xl font-bold">無料プラン</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    登録不要で今すぐ使える
+                  </p>
                 </div>
               </div>
+              <ul className="space-y-3">
+                {[
+                  'YouTubeチャンネル分析（最新50本）',
+                  'YouTubeキーワード検索（人気50件）',
+                  'Qiitaユーザー・キーワード検索',
+                  'Zennユーザー・キーワード検索',
+                  'グラフ・統計表示',
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm">
+                    <span className="text-green-500 mt-0.5">&#10003;</span>
+                    <span className="text-gray-700 dark:text-gray-300">
+                      {item}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            {/* キーワード検索の流れ */}
-            <div className="card">
+            {/* 有料機能 */}
+            <div className="card relative overflow-hidden">
+              <div className="absolute top-4 right-4">
+                <span className="px-2 py-1 text-xs font-medium bg-gradient-to-r from-[#FF0000] to-[#00D4FF] text-white rounded-full">
+                  Coming Soon
+                </span>
+              </div>
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-r from-[#00D4FF] to-[#0099CC] rounded-lg flex items-center justify-center">
-                  <Hash className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 bg-gradient-to-r from-[#FF0000] to-[#00D4FF] rounded-lg flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="text-xl font-bold">キーワード検索</h3>
-              </div>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-[#00D4FF] text-white rounded-full flex items-center justify-center text-sm font-bold">
-                    1
-                  </div>
-                  <div className="text-sm">
-                    <strong>キーワードを入力</strong>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">
-                      調べたいジャンルやテーマを入力
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-[#00D4FF] text-white rounded-full flex items-center justify-center text-sm font-bold">
-                    2
-                  </div>
-                  <div className="text-sm">
-                    <strong>人気動画を表示</strong>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">
-                      再生数順に最大50件を取得
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-[#00D4FF] text-white rounded-full flex items-center justify-center text-sm font-bold">
-                    3
-                  </div>
-                  <div className="text-sm">
-                    <strong>タグから学ぶ</strong>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">
-                      人気動画のタグで企画のヒントを発見
-                    </p>
-                  </div>
+                <div>
+                  <h3 className="text-xl font-bold">プレミアムプラン</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    ログインで利用可能
+                  </p>
                 </div>
               </div>
+              <ul className="space-y-3">
+                {[
+                  '監視設定（キーワード・チャンネル自動監視）',
+                  'AI分析（Geminiによるトレンド分析）',
+                  'ダッシュボード（収集データ一覧）',
+                  'コンテンツ企画提案',
+                  'データの自動定期収集',
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm">
+                    <span className="text-blue-500 mt-0.5">&#10003;</span>
+                    <span className="text-gray-700 dark:text-gray-300">
+                      {item}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
@@ -289,7 +518,7 @@ export default function Home() {
             今すぐ分析を始めましょう
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-            登録不要・完全無料で利用できます
+            YouTube・Qiita・Zennの分析が無料で利用できます
           </p>
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
