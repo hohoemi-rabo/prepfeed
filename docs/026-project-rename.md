@@ -12,32 +12,32 @@ Phase 2 でマルチプラットフォーム（YouTube / Qiita / Zenn）対応�
 
 ### リブランディング
 
-- [ ] `package.json` の name を `prepfeed` に変更
-- [ ] ページタイトル・メタデータを「PrepFeed」に更新
-- [ ] サブタイトル: 「集めて、分析して、ネタにする。」
-- [ ] `NEXT_PUBLIC_SITE_URL` を `https://prepfeed.vercel.app` に変更
-- [ ] OGP画像のブランディング更新
+- [x] `package.json` の name を `prepfeed` に変更
+- [x] ページタイトル・メタデータを「PrepFeed」に更新
+- [x] サブタイトル: 「集めて、分析して、ネタにする。」
+- [x] `NEXT_PUBLIC_SITE_URL` を `https://prepfeed.vercel.app` に変更
+- [x] OGP画像のブランディング更新
 - [ ] ファビコン更新（必要に応じて）
 
 ### URL再構成
 
-- [ ] `/channel/[id]` → `/youtube/channel/[id]` に移動
-- [ ] `/keyword/[query]` → `/youtube/keyword/[query]` に移動
-- [ ] 旧URLからのリダイレクト設定（`next.config.ts`）
-- [ ] 内部リンクの一括更新
+- [x] `/channel/[id]` → `/youtube/channel/[id]` に移動
+- [x] `/keyword/[query]` → `/youtube/keyword/[query]` に移動
+- [x] 旧URLからのリダイレクト設定（`next.config.ts`）
+- [x] 内部リンクの一括更新
 
 ### キャッシュキー
 
-- [ ] キャッシュキープレフィックスを `channel-scope:` → `prepfeed:` に変更
+- [x] キャッシュキープレフィックスを `channel-scope:` → `prepfeed:` に変更
 
 ## 受け入れ条件
 
-- [ ] 全ページのタイトル・メタデータが「PrepFeed」になっている
-- [ ] `/youtube/channel/[id]` でチャンネル詳細が表示される
-- [ ] `/youtube/keyword/[query]` でキーワード結果が表示される
-- [ ] 旧URL `/channel/[id]` が新URLにリダイレクトされる
-- [ ] 旧URL `/keyword/[query]` が新URLにリダイレクトされる
-- [ ] `npm run build` が成功する
+- [x] 全ページのタイトル・メタデータが「PrepFeed」になっている
+- [x] `/youtube/channel/[id]` でチャンネル詳細が表示される
+- [x] `/youtube/keyword/[query]` でキーワード結果が表示される
+- [x] 旧URL `/channel/[id]` が新URLにリダイレクトされる
+- [x] 旧URL `/keyword/[query]` が新URLにリダイレクトされる
+- [x] `npm run build` が成功する
 
 ## 依存関係
 

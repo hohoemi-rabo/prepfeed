@@ -84,6 +84,12 @@ KV_REST_API_TOKEN=...      # Vercel KV
 - **Platform**: Vercel | **Region**: hnd1 (Tokyo)
 - **URL**: https://prepfeed.vercel.app
 
+## Ticket管理ルール
+
+- チケットファイル（`docs/`配下）内のTODOチェックリストを進捗管理に使用
+- 完了した項目は `- [ ]` → `- [x]` に更新する
+- チケット実装完了時、対応するチェックリストをすべて `- [x]` にする
+
 ## Project Status
 
 **Phase 1 Complete** — Phase 2 実装中（026-045チケット）
