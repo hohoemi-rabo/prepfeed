@@ -28,6 +28,7 @@ npm run lint       # Run ESLint
 - **Tailwind CSS 3.4.17** - Styling with CSS variables for theming
 - **Zustand** - Sort state management
 - **Recharts** - Data visualization (dynamic import)
+- **Supabase** - Auth, PostgreSQL database, RLS
 - **Vercel Analytics / OG / KV** - Analytics, OGP, Caching
 
 ## Path Aliases
@@ -50,6 +51,7 @@ npm run lint       # Run ESLint
 │   └── page.tsx            # Home page (2 search types)
 ├── components/             # React components
 ├── lib/                    # Utilities
+│   └── supabase/           # Supabase client (client.ts, server.ts)
 └── types/                  # TypeScript types
 /docs                       # チケット管理（001-045）
 ```
@@ -71,6 +73,8 @@ Required:
 ```bash
 YOUTUBE_API_KEY=your_api_key_here
 NEXT_PUBLIC_SITE_URL=http://localhost:3000  # Production: actual URL
+NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 Optional (production):
@@ -78,6 +82,14 @@ Optional (production):
 KV_REST_API_URL=...        # Vercel KV
 KV_REST_API_TOKEN=...      # Vercel KV
 ```
+
+## Supabase
+
+- **Project ID**: `raxaakwoaodfrkkxlgpv`
+- **Region**: ap-northeast-1 (Tokyo)
+- Browser client: `src/lib/supabase/client.ts` → `createClient()`
+- Server client: `src/lib/supabase/server.ts` → `createClient()` (async)
+- Middleware: `src/middleware.ts` — session refresh
 
 ## Production Deployment
 
