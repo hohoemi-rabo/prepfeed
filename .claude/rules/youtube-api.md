@@ -1,12 +1,13 @@
 ---
 paths:
   - "src/lib/youtube.ts"
+  - "src/lib/qiita.ts"
   - "src/lib/analytics.ts"
   - "src/lib/cache.ts"
   - "src/lib/tracking.ts"
 ---
 
-# YouTube API 統合ルール
+# API Client 統合ルール
 
 ## YouTube API Client (`lib/youtube.ts`)
 
@@ -29,6 +30,16 @@ paths:
 
 - `sortVideos(videos, sortType, sortOrder)` - main sorting logic
 - Smart defaults: date → desc (newest first), others → desc (highest first)
+
+## Qiita API Client (`lib/qiita.ts`)
+
+- Singleton pattern — `qiitaClient` export
+- Optional `QIITA_ACCESS_TOKEN` for higher rate limit (60 → 1,000 req/h)
+- `getUserInfo(userId)` → `QiitaUser`
+- `getUserArticles(userId, limit)` → `QiitaArticle[]`
+- `searchArticles(keyword, limit)` → `QiitaArticle[]`
+- `enrichArticle()` — adds `days_from_published`, `growth_rate` (likes/day)
+- Raw API response mapping: `created_at` → `published_at`, `tags[].name` → `string[]`
 
 ## Tracking (`lib/tracking.ts`)
 

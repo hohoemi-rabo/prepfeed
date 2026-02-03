@@ -13,7 +13,7 @@ paths:
 ## Data Flow
 
 ```
-User → SearchBar → API Routes → YouTube API Client → Cache Layer → YouTube Data API v3
+User → SearchBar → API Routes → API Client (YouTube/Qiita) → Cache Layer → External API
                                       ↓
                             Analytics Processing
                                       ↓
@@ -26,14 +26,22 @@ User → SearchBar → API Routes → YouTube API Client → Cache Layer → You
 
 **Header** (`components/Header.tsx`)
 - Client component with mobile menu state
+- Accepts `user` prop from layout.tsx (server-side auth)
+- Auth UI: login button (unauthenticated) / UserMenu (authenticated)
+- Nav links: ホーム, ダッシュボード (auth-only), お問い合わせ
 - SNS links: X, Instagram, GitHub (with custom X icon SVG)
 - Sticky positioning with responsive navigation
-- Links to: https://x.com/masayuki_kiwami, https://www.instagram.com/masayuki.kiwami/, https://github.com/hohoemi-rabo/youtube-scope
 
 **Footer** (`components/Footer.tsx`)
-- Client component (uses hooks for current year)
+- Server component (static render)
 - SNS icons with hover effects (brand colors)
-- Links to disclaimer, privacy policy, contact page
+- 3プラットフォーム対応の注意事項テキスト
+- Links to disclaimer, privacy policy
+
+**UserMenu** (`components/UserMenu.tsx`)
+- Client component with dropdown (click-outside close)
+- Avatar (next/image), name/email display
+- Links: ダッシュボード, ログアウト (Server Action)
 
 ## Key Components
 

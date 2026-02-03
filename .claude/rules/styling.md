@@ -15,13 +15,15 @@ paths:
 
 ## Brand Colors
 
-| 用途 | カラー |
-|------|--------|
-| Channel analysis | Red (#FF0000) → Red-dark (#CC0000) gradient |
-| Keyword search | Blue (#00D4FF) → Blue-dark (#0099CC) gradient |
-| Charts/Success | Green #10b981 (emerald-500) |
-| Instagram | Pink (#E4405F) |
-| X (Twitter) | Light blue (#1DA1F2) |
+| 用途 | カラー | CSS変数 |
+|------|--------|---------|
+| YouTube / Primary | Red (#FF0000) → Red-dark (#CC0000) | `--color-primary` |
+| Accent | Blue (#00D4FF) | `--color-accent` |
+| Qiita | Green (#55C500) | `--color-qiita` |
+| Zenn | Blue (#3EA8FF) | `--color-zenn` |
+| Charts/Success | Green #10b981 (emerald-500) | — |
+| Instagram | Pink (#E4405F) | — |
+| X (Twitter) | Light blue (#1DA1F2) | — |
 
 ## Custom CSS Classes
 

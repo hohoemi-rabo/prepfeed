@@ -4,17 +4,27 @@ paths:
   - "src/lib/cache.ts"
   - "src/lib/rate-limiter.ts"
   - "src/lib/error-handler.ts"
+  - "src/lib/qiita.ts"
 ---
 
 # API Routes 開発ルール
 
 ## 既存ルート一覧
 
+### YouTube API Routes
+
 | Route | Purpose | Quota Cost | Cache TTL |
 |-------|---------|------------|-----------|
 | `/api/youtube/search` | Channel search | 100 units | 30 min |
 | `/api/youtube/channel/[id]` | Channel + videos | 103 units | 30 min |
 | `/api/youtube/keyword` | Keyword search | 150 units | 30 min |
+
+### Qiita API Routes
+
+| Route | Purpose | Rate Limit | Cache TTL |
+|-------|---------|------------|-----------|
+| `/api/qiita/user/[id]` | User profile + articles | 60/h (token: 1,000/h) | 30 min |
+| `/api/qiita/keyword` | Keyword search (`?q=`) | 60/h (token: 1,000/h) | 30 min |
 
 ## Caching Strategy (`lib/cache.ts`)
 

@@ -8,10 +8,17 @@ paths:
 
 ## Key Interfaces
 
+### YouTube (`types/index.ts`)
 - `YouTubeChannel` - Channel metadata (id, title, subscriberCount, etc.)
 - `YouTubeVideo` - Video with analytics (viewCount, likeRate, growthRate, isTrending, tags, etc.)
 - `SortType` - 'views' | 'date' | 'growth' | 'comments' | 'likes'
 - `KeywordSearchResponse` - Keyword search API response (videos, query, count)
+
+### Qiita (`types/qiita.ts`)
+- `QiitaUser` - User profile (id, name, profile_image_url, items_count, followers_count)
+- `QiitaArticle` - Article with analytics (likes_count, stocks_count, tags, days_from_published, growth_rate)
+- `QiitaUserResponse` - User API response (user + articles)
+- `QiitaKeywordResponse` - Keyword search response (articles, query, count)
 
 ## Number Formatting (`format-utils.ts`)
 

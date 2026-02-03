@@ -5,9 +5,10 @@ Domain-specific rules are in `.claude/rules/` and loaded conditionally by file p
 
 ## Project Overview
 
-**PrepFeed** - YouTube・Qiita・Zennの分析で企画のネタ出しをサポートするツール
+**PrepFeed** — 集めて、分析して、ネタにする。
 
-Next.js 15 (App Router) + React 19 + TypeScript + Tailwind CSSで構築されたフルスタックWebアプリケーション。YouTube Data API v3を使用してチャンネル分析・キーワード検索による動画統計を提供。Phase 2でQiita/Zenn対応とGemini AI分析を追加予定。
+YouTube・Qiita・Zennの公開データを分析し、コンテンツ企画のネタ出しをサポートするツール。
+Next.js 15 (App Router) + React 19 + TypeScript + Tailwind CSS + Supabase で構築。
 
 **旧名称**: チャンネルスコープ → YouTubeスコープ → PrepFeed
 
@@ -41,31 +42,55 @@ npm run lint       # Run ESLint
 /src
 ├── app/                    # Next.js App Router
 │   ├── api/youtube/        # YouTube API (search, channel/[id], keyword)
+│   ├── api/qiita/          # Qiita API (user/[id], keyword)
 │   ├── api/og/             # Dynamic OGP image generation
+│   ├── auth/               # Auth pages (login, callback)
 │   ├── youtube/channel/[id]/   # Channel detail page
 │   ├── youtube/keyword/[query]/ # Keyword search results page
+│   ├── dashboard/          # Dashboard (authenticated)
 │   ├── contact/            # Contact page
 │   ├── disclaimer/         # Disclaimer page
 │   ├── privacy/            # Privacy policy
-│   ├── layout.tsx          # Root layout
-│   └── page.tsx            # Home page (2 search types)
+│   ├── layout.tsx          # Root layout (fetches user for Header)
+│   └── page.tsx            # Home page (3-platform tabs)
 ├── components/             # React components
+│   ├── Header.tsx          # Sticky header with auth UI
+│   ├── Footer.tsx          # Footer with 3-platform disclaimer
+│   └── UserMenu.tsx        # Avatar dropdown (authenticated)
 ├── lib/                    # Utilities
-│   └── supabase/           # Supabase client (client.ts, server.ts)
-└── types/                  # TypeScript types
+│   ├── supabase/           # Supabase client (client.ts, server.ts)
+│   ├── youtube.ts          # YouTube API client (singleton)
+│   ├── qiita.ts            # Qiita API client (singleton)
+│   ├── cache.ts            # Cache (Vercel KV / in-memory)
+│   └── rate-limiter.ts     # Rate limiting
+├── types/                  # TypeScript types
+│   ├── index.ts            # YouTube types
+│   └── qiita.ts            # Qiita types
+└── middleware.ts            # Session refresh + protected routes
 /docs                       # チケット管理（001-045）
 ```
 
-## Two Search Methods
+## Search Methods (3 Platforms)
 
-### 1. Channel Analysis
-- Page: `/` → `/youtube/channel/[id]` | UI: Red gradient | API: search → channel/[id]
-- Features: Latest 50 videos, charts, SNS sharing
+### YouTube
+- **チャンネル分析**: `/` → `/youtube/channel/[id]` | Red gradient | SearchBar component
+- **キーワード検索**: `/` → `/youtube/keyword/[query]` | Blue gradient | dedicated input (NOT SearchBar)
 
-### 2. Keyword Search
-- Page: `/` → `/youtube/keyword/[query]` | UI: Blue gradient | API: keyword?q=
-- Features: Top 50 videos by views, tags display
-- **Important**: Uses dedicated input (NOT SearchBar component)
+### Qiita
+- **ユーザー検索**: `/` → `/qiita/user/[id]` | Green gradient (#55C500)
+- **キーワード検索**: `/` → `/qiita/keyword/[query]` | Green gradient (#55C500)
+
+### Zenn (UI実装済み、API未実装)
+- **ユーザー検索**: `/` → `/zenn/user/[id]` | Blue gradient (#3EA8FF)
+- **キーワード検索**: `/` → `/zenn/keyword/[query]` | Blue gradient (#3EA8FF)
+
+## Authentication (Supabase Auth)
+
+- **Google OAuth** (PKCE flow via `@supabase/ssr`)
+- Login: `/auth/login` → Google OAuth → `/auth/callback` → `/dashboard`
+- Protected routes: `/dashboard/*` (middleware redirect to `/auth/login`)
+- Server-side user fetch in `layout.tsx` → props to Header
+- Sign out: Server Action in `auth/actions.ts`
 
 ## Environment Variables
 
@@ -77,10 +102,11 @@ NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-Optional (production):
+Optional:
 ```bash
-KV_REST_API_URL=...        # Vercel KV
-KV_REST_API_TOKEN=...      # Vercel KV
+QIITA_ACCESS_TOKEN=...     # Qiita API (なし: 60req/h, あり: 1,000req/h)
+KV_REST_API_URL=...        # Vercel KV (production)
+KV_REST_API_TOKEN=...      # Vercel KV (production)
 ```
 
 ## Supabase
@@ -105,6 +131,15 @@ KV_REST_API_TOKEN=...      # Vercel KV
 ## Project Status
 
 **Phase 1 Complete** — Phase 2 実装中（026-045チケット）
+
+Phase 2 完了チケット:
+- 026: プロジェクトリネーム（YouTubeスコープ → PrepFeed）
+- 027: Phase 2用TypeScript型定義（Qiita/Zenn/Monitoring/AI）
+- 028: Supabase DB設計・セットアップ（6テーブル、RLS、クライアント初期化）
+- 029: Supabase Auth認証フロー（Google OAuth、middleware、UserMenu）
+- 030: ログインページUI（機能紹介、ローディング状態）
+- 031: ヘッダー・フッター・ホームページ更新（3プラットフォームタブUI）
+- 032: Qiita APIクライアント & APIルート
 
 Phase 1 完了機能:
 - Channel search with autocomplete, Latest 50 videos analysis
