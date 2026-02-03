@@ -57,6 +57,7 @@ export function getSortDisplayName(sortType: SortType): string {
     growth: '伸び率',
     comments: 'コメント率',
     likes: 'いいね率',
+    stocks: 'ストック数',
   };
 
   return sortNames[sortType] || '不明';

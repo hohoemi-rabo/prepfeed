@@ -12,58 +12,58 @@ Phase 2 で必要となる全型定義を追加・更新する。Qiita / Zenn �
 
 ### プラットフォーム共通型
 
-- [ ] `Platform` 型: `'youtube' | 'qiita' | 'zenn'`
-- [ ] `MonitorType` 型: `'keyword' | 'channel' | 'user'`
-- [ ] `FetchCount` 型: `50 | 100 | 200`
+- [x] `Platform` 型: `'youtube' | 'qiita' | 'zenn'`
+- [x] `MonitorType` 型: `'keyword' | 'channel' | 'user'`
+- [x] `FetchCount` 型: `50 | 100 | 200`
 
 ### Qiita関連型
 
-- [ ] `QiitaUser` インターフェース（id, name, profile_image_url, items_count, followers_count）
-- [ ] `QiitaArticle` インターフェース（id, title, url, published_at, likes_count, stocks_count, tags, author_id, author_name, days_from_published, growth_rate）
-- [ ] `QiitaUserResponse` / `QiitaKeywordResponse` レスポンス型
+- [x] `QiitaUser` インターフェース（id, name, profile_image_url, items_count, followers_count）
+- [x] `QiitaArticle` インターフェース（id, title, url, published_at, likes_count, stocks_count, tags, author_id, author_name, days_from_published, growth_rate）
+- [x] `QiitaUserResponse` / `QiitaKeywordResponse` レスポンス型
 
 ### Zenn関連型
 
-- [ ] `ZennUser` インターフェース（username, name, avatar_url, articles_count）
-- [ ] `ZennArticle` インターフェース（id, title, url, published_at, liked_count, author_username, author_name, days_from_published, growth_rate）
-- [ ] `ZennUserResponse` / `ZennKeywordResponse` レスポンス型
+- [x] `ZennUser` インターフェース（username, name, avatar_url, articles_count）
+- [x] `ZennArticle` インターフェース（id, title, url, published_at, liked_count, author_username, author_name, days_from_published, growth_rate）
+- [x] `ZennUserResponse` / `ZennKeywordResponse` レスポンス型
 
 ### 監視設定型
 
-- [ ] `MonitorSetting` インターフェース（id, user_id, platform, type, value, display_name, fetch_count, is_active, last_fetched_at, created_at, updated_at）
-- [ ] `CreateMonitorSettingRequest` / `UpdateMonitorSettingRequest` 型
+- [x] `MonitorSetting` インターフェース（id, user_id, platform, type, value, display_name, fetch_count, is_active, last_fetched_at, created_at, updated_at）
+- [x] `CreateMonitorSettingRequest` / `UpdateMonitorSettingRequest` 型
 
 ### 取得ログ型
 
-- [ ] `FetchLog` インターフェース（id, user_id, setting_id, platform, status, records_count, error_message, executed_at）
+- [x] `FetchLog` インターフェース（id, user_id, setting_id, platform, status, records_count, error_message, executed_at）
 
 ### ユーザープロファイル型
 
-- [ ] `UserProfile` インターフェース（id, email, display_name, avatar_url, spreadsheet_id, google_refresh_token, is_premium, created_at, updated_at）
+- [x] `UserProfile` インターフェース（id, email, display_name, avatar_url, spreadsheet_id, google_refresh_token, is_premium, created_at, updated_at）
 
 ### 収集データ型
 
-- [ ] `CollectedData` インターフェース（id, user_id, setting_id, platform, content_id, title, url, published_at, author_id, author_name, views, likes, comments, stocks, duration, tags, growth_rate, collected_at）
-- [ ] ユニーク制約型: `(user_id, setting_id, content_id)`
+- [x] `CollectedData` インターフェース（id, user_id, setting_id, platform, content_id, title, url, published_at, author_id, author_name, views, likes, comments, stocks, duration, tags, growth_rate, collected_at）
+- [x] ユニーク制約型: `(user_id, setting_id, content_id)`
 
 ### AI分析型
 
-- [ ] `AnalysisType` 型: `'simple' | 'detailed'`
-- [ ] `JobStatus` 型: `'queued' | 'processing' | 'completed' | 'failed'`
-- [ ] `SimpleAnalysisResult` インターフェース（trend_score, summary, top_contents, keywords, generated_at）
-- [ ] `DetailedAnalysisResult` インターフェース（trend_analysis, content_ideas, competitor_analysis, recommendations, generated_at）
-- [ ] `AnalysisResult` インターフェース（id, user_id, setting_id?, analysis_type, status, result?, error_message?, created_at, completed_at?）
-- [ ] `AnalysisJob` インターフェース（id, user_id, analysis_id, job_type, status, priority, payload, started_at?, completed_at?, created_at）
+- [x] `AnalysisType` 型: `'simple' | 'detailed'`
+- [x] `JobStatus` 型: `'queued' | 'processing' | 'completed' | 'failed'`
+- [x] `SimpleAnalysisResult` インターフェース（trend_score, summary, top_contents, keywords, generated_at）
+- [x] `DetailedAnalysisResult` インターフェース（trend_analysis, content_ideas, competitor_analysis, recommendations, generated_at）
+- [x] `AnalysisResult` インターフェース（id, user_id, setting_id?, analysis_type, status, result?, error_message?, created_at, completed_at?）
+- [x] `AnalysisJob` インターフェース（id, user_id, analysis_id, job_type, status, priority, payload, started_at?, completed_at?, created_at）
 
 ### 既存型の更新
 
-- [ ] Qiita / Zenn 用の `SortType` 追加（`'likes' | 'date' | 'stocks'` 等）
+- [x] Qiita / Zenn 用の `SortType` 追加（`'likes' | 'date' | 'stocks'` 等）
 
 ## 受け入れ条件
 
-- [ ] 全型定義が `src/types/` 配下に整理されている
-- [ ] `npm run build` で型エラーが発生しない
-- [ ] 既存のYouTube型に影響がない
+- [x] 全型定義が `src/types/` 配下に整理されている
+- [x] `npm run build` で型エラーが発生しない
+- [x] 既存のYouTube型に影響がない
 
 ## 依存関係
 

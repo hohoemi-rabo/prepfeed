@@ -1,3 +1,12 @@
+// Re-export Phase 2 types
+export * from './common';
+export * from './qiita';
+export * from './zenn';
+export * from './monitor';
+export * from './user';
+export * from './collected-data';
+export * from './analysis';
+
 // YouTube API Types
 export interface YouTubeChannel {
   id: string;
@@ -64,7 +73,7 @@ export interface KeywordSearchResponse {
 }
 
 // UI State Types
-export type SortType = 'views' | 'date' | 'growth' | 'comments' | 'likes';
+export type SortType = 'views' | 'date' | 'growth' | 'comments' | 'likes' | 'stocks';
 export type SortOrder = 'asc' | 'desc';
 
 export interface SortState {
