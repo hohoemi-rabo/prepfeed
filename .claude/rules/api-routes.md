@@ -5,6 +5,7 @@ paths:
   - "src/lib/rate-limiter.ts"
   - "src/lib/error-handler.ts"
   - "src/lib/qiita.ts"
+  - "src/lib/zenn.ts"
 ---
 
 # API Routes 開発ルール
@@ -25,6 +26,13 @@ paths:
 |-------|---------|------------|-----------|
 | `/api/qiita/user/[id]` | User profile + articles | 60/h (token: 1,000/h) | 30 min |
 | `/api/qiita/keyword` | Keyword search (`?q=`) | 60/h (token: 1,000/h) | 30 min |
+
+### Zenn API Routes (非公式API)
+
+| Route | Purpose | Cache TTL |
+|-------|---------|-----------|
+| `/api/zenn/user/[username]` | User profile + articles | 30 min |
+| `/api/zenn/keyword` | Topic search (`?q=`) | 30 min |
 
 ## Caching Strategy (`lib/cache.ts`)
 

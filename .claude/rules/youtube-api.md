@@ -2,6 +2,7 @@
 paths:
   - "src/lib/youtube.ts"
   - "src/lib/qiita.ts"
+  - "src/lib/zenn.ts"
   - "src/lib/analytics.ts"
   - "src/lib/cache.ts"
   - "src/lib/tracking.ts"
@@ -40,6 +41,17 @@ paths:
 - `searchArticles(keyword, limit)` → `QiitaArticle[]`
 - `enrichArticle()` — adds `days_from_published`, `growth_rate` (likes/day)
 - Raw API response mapping: `created_at` → `published_at`, `tags[].name` → `string[]`
+
+## Zenn API Client (`lib/zenn.ts`)
+
+- Singleton pattern — `zennClient` export
+- No authentication required (非公式API)
+- `getUserInfo(username)` → `ZennUser` (via `/api/users/{username}`)
+- `getUserArticles(username, limit)` → `ZennArticle[]`
+- `searchArticlesByTopic(topicName, limit)` → `ZennArticle[]`
+- `enrichArticle()` — adds `days_from_published`, `growth_rate` (likes/day)
+- Raw API response mapping: `path` → full URL, `id` (number) → string
+- API仕様変更時のフォールバック: JSON parse error → 502, empty articles → `[]`
 
 ## Tracking (`lib/tracking.ts`)
 

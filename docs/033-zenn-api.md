@@ -12,13 +12,13 @@ Phase 2 で技術トレンドの収集対象として Zenn を追加する。非
 
 ### Zenn APIクライアント（`lib/zenn.ts`）
 
-- [ ] シングルトンパターン
-- [ ] 認証不要（非公式API）
-- [ ] `getUserArticles(username, limit)` — ユーザーの記事一覧取得
-- [ ] `searchArticlesByTopic(topicName, limit)` — トピック別記事検索
-- [ ] 記事データへの分析指標付与（growth_rate, days_from_published）
-- [ ] 適度なリクエスト間隔（非公式APIへの配慮）
-- [ ] エラーハンドリング（API仕様変更時のフォールバック）
+- [x] シングルトンパターン
+- [x] 認証不要（非公式API）
+- [x] `getUserArticles(username, limit)` — ユーザーの記事一覧取得
+- [x] `searchArticlesByTopic(topicName, limit)` — トピック別記事検索
+- [x] 記事データへの分析指標付与（growth_rate, days_from_published）
+- [x] 適度なリクエスト間隔（非公式APIへの配慮）
+- [x] エラーハンドリング（API仕様変更時のフォールバック）
 
 ### Zenn API外部仕様（非公式）
 
@@ -31,17 +31,17 @@ Phase 2 で技術トレンドの収集対象として Zenn を追加する。非
 
 #### `/api/zenn/user/[username]` (GET)
 
-- [ ] ユーザー名からプロフィール + 記事一覧を返す
-- [ ] クエリパラメータ: `limit`（デフォルト50）
-- [ ] キャッシュ: 30分 TTL
-- [ ] レートリミット適用
+- [x] ユーザー名からプロフィール + 記事一覧を返す
+- [x] クエリパラメータ: `limit`（デフォルト50）
+- [x] キャッシュ: 30分 TTL
+- [x] レートリミット適用
 
 #### `/api/zenn/keyword` (GET)
 
-- [ ] トピック名で記事検索
-- [ ] クエリパラメータ: `q`, `limit`（デフォルト50）
-- [ ] キャッシュ: 30分 TTL
-- [ ] レートリミット適用
+- [x] トピック名で記事検索
+- [x] クエリパラメータ: `q`, `limit`（デフォルト50）
+- [x] キャッシュ: 30分 TTL
+- [x] レートリミット適用
 
 ### レスポンス形式
 
@@ -62,12 +62,12 @@ Phase 2 で技術トレンドの収集対象として Zenn を追加する。非
 
 ## 受け入れ条件
 
-- [ ] `/api/zenn/user/[username]` でユーザー記事が取得できる
-- [ ] `/api/zenn/keyword?q=Next.js` でトピック検索結果が返る
-- [ ] 各記事に `days_from_published`, `growth_rate` が付与されている
-- [ ] キャッシュが機能している
-- [ ] レートリミットが適用されている
-- [ ] API仕様変更時にアプリが落ちない（適切なエラーレスポンス）
+- [x] `/api/zenn/user/[username]` でユーザー記事が取得できる
+- [x] `/api/zenn/keyword?q=Next.js` でトピック検索結果が返る
+- [x] 各記事に `days_from_published`, `growth_rate` が付与されている
+- [x] キャッシュが機能している
+- [x] レートリミットが適用されている
+- [x] API仕様変更時にアプリが落ちない（適切なエラーレスポンス）
 
 ## 依存関係
 

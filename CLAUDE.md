@@ -43,6 +43,7 @@ npm run lint       # Run ESLint
 ├── app/                    # Next.js App Router
 │   ├── api/youtube/        # YouTube API (search, channel/[id], keyword)
 │   ├── api/qiita/          # Qiita API (user/[id], keyword)
+│   ├── api/zenn/           # Zenn API (user/[username], keyword)
 │   ├── api/og/             # Dynamic OGP image generation
 │   ├── auth/               # Auth pages (login, callback)
 │   ├── youtube/channel/[id]/   # Channel detail page
@@ -61,11 +62,13 @@ npm run lint       # Run ESLint
 │   ├── supabase/           # Supabase client (client.ts, server.ts)
 │   ├── youtube.ts          # YouTube API client (singleton)
 │   ├── qiita.ts            # Qiita API client (singleton)
+│   ├── zenn.ts             # Zenn API client (singleton, 非公式API)
 │   ├── cache.ts            # Cache (Vercel KV / in-memory)
 │   └── rate-limiter.ts     # Rate limiting
 ├── types/                  # TypeScript types
 │   ├── index.ts            # YouTube types
-│   └── qiita.ts            # Qiita types
+│   ├── qiita.ts            # Qiita types
+│   └── zenn.ts             # Zenn types
 └── middleware.ts            # Session refresh + protected routes
 /docs                       # チケット管理（001-045）
 ```
@@ -140,6 +143,7 @@ Phase 2 完了チケット:
 - 030: ログインページUI（機能紹介、ローディング状態）
 - 031: ヘッダー・フッター・ホームページ更新（3プラットフォームタブUI）
 - 032: Qiita APIクライアント & APIルート
+- 033: Zenn APIクライアント & APIルート
 
 Phase 1 完了機能:
 - Channel search with autocomplete, Latest 50 videos analysis

@@ -20,6 +20,12 @@ paths:
 - `QiitaUserResponse` - User API response (user + articles)
 - `QiitaKeywordResponse` - Keyword search response (articles, query, count)
 
+### Zenn (`types/zenn.ts`)
+- `ZennUser` - User profile (username, name, avatar_url, articles_count)
+- `ZennArticle` - Article with analytics (liked_count, days_from_published, growth_rate)
+- `ZennUserResponse` - User API response (user + articles)
+- `ZennKeywordResponse` - Keyword search response (articles, query, count)
+
 ## Number Formatting (`format-utils.ts`)
 
 **Critical**: Always use these for consistency
