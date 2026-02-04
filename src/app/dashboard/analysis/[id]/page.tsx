@@ -27,7 +27,7 @@ export default function AnalysisDetailPage() {
           return;
         }
 
-        setAnalysis(data.analysis);
+        setAnalysis(data);
       } catch {
         setError('ネットワークエラーが発生しました');
       } finally {
@@ -47,7 +47,7 @@ export default function AnalysisDetailPage() {
         const response = await fetch(`/api/analysis/${id}`);
         const data = await response.json();
         if (response.ok) {
-          setAnalysis(data.analysis);
+          setAnalysis(data);
         }
       } catch {
         setError('結果の取得に失敗しました');
