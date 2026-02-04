@@ -25,7 +25,8 @@ export default function DashboardPage() {
   const [detailedAnalyses, setDetailedAnalyses] = useState<AnalysisResult[]>([]);
   const [logs, setLogs] = useState<FetchLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isPremium, setIsPremium] = useState(true);
+  // TODO: プレミアムチェック（現段階では全ユーザーに開放）
+  const [isPremium] = useState(true);
   const [runningAnalysisId, setRunningAnalysisId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -64,8 +65,6 @@ export default function DashboardPage() {
         setRunningAnalysisId(running.id);
       }
 
-      // プレミアムチェック（設定が1件でもあればプレミアム、またはAPIが403を返さない）
-      setIsPremium(settingsRes.ok);
       setError(null);
     } catch {
       setError('データの取得に失敗しました');

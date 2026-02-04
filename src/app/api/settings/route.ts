@@ -84,19 +84,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // プレミアムチェック
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('is_premium')
-      .eq('id', user.id)
-      .single();
-
-    if (!profile?.is_premium) {
-      return NextResponse.json(
-        { error: 'この機能は有料プランのみ利用可能です' },
-        { status: 403 }
-      );
-    }
+    // TODO: プレミアムチェック（現段階では全ユーザーに開放）
+    // const { data: profile } = await supabase
+    //   .from('profiles')
+    //   .select('is_premium')
+    //   .eq('id', user.id)
+    //   .single();
+    //
+    // if (!profile?.is_premium) {
+    //   return NextResponse.json(
+    //     { error: 'この機能は有料プランのみ利用可能です' },
+    //     { status: 403 }
+    //   );
+    // }
 
     // リクエストボディ
     const body = await request.json();
