@@ -34,6 +34,30 @@ paths:
 | `/api/zenn/user/[username]` | User profile + articles | 30 min |
 | `/api/zenn/keyword` | Topic search (`?q=`) | 30 min |
 
+### 監視設定 API Routes (認証必須)
+
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/api/settings` | GET | 設定一覧（`?active=true/false` フィルタ） |
+| `/api/settings` | POST | 新規作成 + 初回データ取得 + 簡易分析（バックグラウンド） |
+| `/api/settings/[id]` | PUT | 設定更新（display_name, fetch_count, is_active） |
+| `/api/settings/[id]` | DELETE | 設定削除（analysis_results → collected_data → settings 順） |
+
+### 分析 API Routes (認証必須)
+
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/api/analysis` | GET | 分析結果一覧（`?type=simple/detailed`） |
+| `/api/analysis/[id]` | GET | 分析結果詳細（JSONB result含む） |
+| `/api/analysis/detailed` | POST | 詳細分析リクエスト → 202 Accepted |
+| `/api/analysis/status/[id]` | GET | ジョブステータスポーリング（no-cache） |
+
+### ログ API Routes (認証必須)
+
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/api/logs` | GET | 取得ログ一覧（`?limit=5`、最大50） |
+
 ## Caching Strategy (`lib/cache.ts`)
 
 - **Production**: Vercel KV with 30-minute TTL
@@ -53,10 +77,35 @@ paths:
 - Each type has retry logic and user-friendly messages
 - Exponential backoff: 1s → 2s → 4s → 8s (max 30s)
 
-## Pattern: 新規APIルート追加手順
+## Pattern: 新規APIルート追加手順（公開API）
 
 1. Create route in `/src/app/api/`
 2. Use `getCachedData()` wrapper for API calls
 3. Add rate limiting with `checkLimit()`
 4. Classify errors with `classifyError()`
 5. Add HTTP cache headers
+
+## Pattern: 認証付きAPIルート（ダッシュボード系）
+
+1. `createClient()` で Supabase サーバークライアント取得
+2. `supabase.auth.getUser()` で認証チェック（401返却）
+3. `.eq('user_id', user.id)` で必ず自分のデータのみアクセス
+4. バリデーション → DB操作 → レスポンス
+
+## バックグラウンドジョブパターン
+
+```typescript
+import { waitUntil } from '@vercel/functions';
+
+// レスポンス返却後にバックグラウンド処理
+waitUntil(
+  (async () => {
+    const innerSupabase = await createClient();
+    // 重い処理をここで実行
+  })()
+);
+
+return NextResponse.json({ ... }, { status: 202 });
+```
+
+注意: `waitUntil` 内では新しい Supabase クライアントを作成する（元のリクエストコンテキストが無効になるため）

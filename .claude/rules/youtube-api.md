@@ -3,6 +3,9 @@ paths:
   - "src/lib/youtube.ts"
   - "src/lib/qiita.ts"
   - "src/lib/zenn.ts"
+  - "src/lib/gemini.ts"
+  - "src/lib/monitor.ts"
+  - "src/lib/analysis.ts"
   - "src/lib/analytics.ts"
   - "src/lib/cache.ts"
   - "src/lib/tracking.ts"
@@ -52,6 +55,30 @@ paths:
 - `enrichArticle()` — adds `days_from_published`, `growth_rate` (likes/day)
 - Raw API response mapping: `path` → full URL, `id` (number) → string
 - API仕様変更時のフォールバック: JSON parse error → 502, empty articles → `[]`
+
+## Gemini AI Client (`lib/gemini.ts`)
+
+- Singleton pattern — `GeminiClient` class
+- Model: `gemini-2.5-flash`
+- `generateJSON<T>(prompt)` — JSONレスポンスをパース
+- リトライ: 最大3回、指数バックオフ（1s → 2s → 4s）
+- 429 (rate limit), 503 (server error) でリトライ
+- 環境変数: `GEMINI_API_KEY`
+
+## Monitor Business Logic (`lib/monitor.ts`)
+
+- `validatePlatformType(platform, type)` — platform + type 組合せバリデーション
+- `validateFetchCount(count)` — 50 / 100 / 200 のみ許可
+- `fetchInitialData(setting, userId)` — 初回データ取得 + collected_data upsert
+- `transformYouTubeData()` / `transformQiitaData()` / `transformZennData()` — プラットフォーム横断変換
+- `recordFetchLog()` — fetch_logs にログ記録
+
+## Analysis Business Logic (`lib/analysis.ts`)
+
+- `runSimpleAnalysis(settingId, setting, data)` — Gemini で簡易分析 → SimpleAnalysisResult
+- `runDetailedAnalysis(analysisId, userId)` — Gemini で詳細分析 → DetailedAnalysisResult
+- `buildSimpleAnalysisPrompt()` / `buildDetailedAnalysisPrompt()` — プロンプト生成
+- 詳細分析は全設定のデータを横断的に分析
 
 ## Tracking (`lib/tracking.ts`)
 

@@ -30,7 +30,8 @@ npm run lint       # Run ESLint
 - **Zustand** - Sort state management
 - **Recharts** - Data visualization (dynamic import)
 - **Supabase** - Auth, PostgreSQL database, RLS
-- **Vercel Analytics / OG / KV** - Analytics, OGP, Caching
+- **Gemini 2.5 Flash** - AI分析（簡易分析・詳細分析）
+- **Vercel Analytics / OG / KV / Functions** - Analytics, OGP, Caching, Background Jobs
 
 ## Path Aliases
 
@@ -44,11 +45,19 @@ npm run lint       # Run ESLint
 │   ├── api/youtube/        # YouTube API (search, channel/[id], keyword)
 │   ├── api/qiita/          # Qiita API (user/[id], keyword)
 │   ├── api/zenn/           # Zenn API (user/[username], keyword)
+│   ├── api/settings/       # 監視設定 CRUD API
+│   ├── api/analysis/       # 分析結果 API (list, detail, detailed, status)
+│   ├── api/logs/           # 取得ログ API
 │   ├── api/og/             # Dynamic OGP image generation
 │   ├── auth/               # Auth pages (login, callback)
-│   ├── youtube/channel/[id]/   # Channel detail page
+│   ├── youtube/channel/[id]/    # Channel detail page
 │   ├── youtube/keyword/[query]/ # Keyword search results page
-│   ├── dashboard/          # Dashboard (authenticated)
+│   ├── dashboard/               # Dashboard (authenticated, tab navigation)
+│   │   ├── layout.tsx           # DashboardNav + container
+│   │   ├── page.tsx             # 分析結果一覧 + 詳細分析実行
+│   │   ├── analysis/[id]/       # 詳細分析レポートページ
+│   │   ├── settings/            # 監視設定管理ページ
+│   │   └── export/              # エクスポート（プレースホルダー）
 │   ├── contact/            # Contact page
 │   ├── disclaimer/         # Disclaimer page
 │   ├── privacy/            # Privacy policy
@@ -57,18 +66,40 @@ npm run lint       # Run ESLint
 ├── components/             # React components
 │   ├── Header.tsx          # Sticky header with auth UI
 │   ├── Footer.tsx          # Footer with 3-platform disclaimer
-│   └── UserMenu.tsx        # Avatar dropdown (authenticated)
+│   ├── UserMenu.tsx        # Avatar dropdown (authenticated)
+│   └── dashboard/          # Dashboard components
+│       ├── DashboardNav.tsx       # タブナビ（分析/設定/エクスポート）
+│       ├── MonitorWizard.tsx      # 5ステップ監視設定ウィザード
+│       ├── MonitorSettingCard.tsx  # 監視設定カード（編集/削除）
+│       ├── MonitorEditModal.tsx   # 設定編集モーダル
+│       ├── AnalysisCard.tsx       # 簡易分析カード（スコア/サマリー）
+│       ├── AnalysisProgress.tsx   # 分析プログレスバー（ポーリング）
+│       ├── DetailedReport.tsx     # 詳細分析レポート（4セクション）
+│       ├── FetchLogList.tsx       # 取得ログ一覧
+│       ├── SettingsCompactList.tsx # 設定コンパクト表示
+│       └── UpgradeBanner.tsx      # プレミアムバナー（現在非表示）
+├── hooks/                  # Custom React Hooks
+│   └── useAnalysisStatus.ts # 分析ステータスポーリング（2秒間隔）
 ├── lib/                    # Utilities
 │   ├── supabase/           # Supabase client (client.ts, server.ts)
 │   ├── youtube.ts          # YouTube API client (singleton)
 │   ├── qiita.ts            # Qiita API client (singleton)
 │   ├── zenn.ts             # Zenn API client (singleton, 非公式API)
+│   ├── gemini.ts           # Gemini AI client (singleton, retry付き)
+│   ├── monitor.ts          # 監視設定ビジネスロジック
+│   ├── analysis.ts         # AI分析ビジネスロジック
+│   ├── format-utils.ts     # 数値・日時フォーマット
 │   ├── cache.ts            # Cache (Vercel KV / in-memory)
 │   └── rate-limiter.ts     # Rate limiting
 ├── types/                  # TypeScript types
-│   ├── index.ts            # YouTube types
+│   ├── index.ts            # YouTube types + Phase 2 re-exports
 │   ├── qiita.ts            # Qiita types
-│   └── zenn.ts             # Zenn types
+│   ├── zenn.ts             # Zenn types
+│   ├── common.ts           # Platform, MonitorType, JobStatus, FetchCount
+│   ├── monitor.ts          # MonitorSetting, FetchLog
+│   ├── analysis.ts         # AnalysisResult, SimpleAnalysisResult, DetailedAnalysisResult
+│   ├── collected-data.ts   # CollectedData
+│   └── user.ts             # UserProfile
 └── middleware.ts            # Session refresh + protected routes
 /docs                       # チケット管理（001-045）
 ```
@@ -83,7 +114,7 @@ npm run lint       # Run ESLint
 - **ユーザー検索**: `/` → `/qiita/user/[id]` | Green gradient (#55C500)
 - **キーワード検索**: `/` → `/qiita/keyword/[query]` | Green gradient (#55C500)
 
-### Zenn (UI実装済み、API未実装)
+### Zenn
 - **ユーザー検索**: `/` → `/zenn/user/[id]` | Blue gradient (#3EA8FF)
 - **キーワード検索**: `/` → `/zenn/keyword/[query]` | Blue gradient (#3EA8FF)
 
@@ -107,6 +138,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 Optional:
 ```bash
+GEMINI_API_KEY=...         # Gemini AI (分析機能に必須)
 QIITA_ACCESS_TOKEN=...     # Qiita API (なし: 60req/h, あり: 1,000req/h)
 KV_REST_API_URL=...        # Vercel KV (production)
 KV_REST_API_TOKEN=...      # Vercel KV (production)
@@ -120,6 +152,24 @@ KV_REST_API_TOKEN=...      # Vercel KV (production)
 - Server client: `src/lib/supabase/server.ts` → `createClient()` (async)
 - Middleware: `src/middleware.ts` — session refresh
 
+### Database Tables
+
+| Table | Purpose |
+|-------|---------|
+| `profiles` | ユーザープロフィール（auth.users トリガー自動作成） |
+| `monitor_settings` | 監視設定（platform, type, value, fetch_count） |
+| `collected_data` | 収集データ（プラットフォーム横断の統一フォーマット） |
+| `analysis_results` | 分析結果（simple/detailed、JSONB result） |
+| `analysis_jobs` | バックグラウンドジョブ管理 |
+| `fetch_logs` | データ取得ログ（status, records_count） |
+
+### Key Relationships
+- `monitor_settings` → `collected_data` (1:N, setting_id)
+- `monitor_settings` → `analysis_results` (1:N, setting_id, simple分析のみ)
+- `analysis_results` → `analysis_jobs` (1:1, analysis_id, detailed分析のみ)
+- 監視設定削除時: `analysis_results` → `collected_data` → `monitor_settings` の順で削除
+- `fetch_logs` は設定削除時も保持（監査ログとして）
+
 ## Production Deployment
 
 - **Platform**: Vercel | **Region**: hnd1 (Tokyo)
@@ -130,6 +180,34 @@ KV_REST_API_TOKEN=...      # Vercel KV (production)
 - チケットファイル（`docs/`配下）内のTODOチェックリストを進捗管理に使用
 - 完了した項目は `- [ ]` → `- [x]` に更新する
 - チケット実装完了時、対応するチェックリストをすべて `- [x]` にする
+
+## Dashboard Architecture
+
+### タブナビゲーション
+- `/dashboard` — 分析結果一覧 + 詳細分析実行
+- `/dashboard/settings` — 監視設定管理（ウィザード + 一覧）
+- `/dashboard/analysis/[id]` — 詳細分析レポート表示
+- `/dashboard/export` — エクスポート（プレースホルダー）
+
+### データフロー
+```
+監視設定作成 → 初回データ取得 → 簡易分析（バックグラウンド）
+                                    ↓
+ダッシュボード ← AnalysisCard表示 ← analysis_results (simple)
+      ↓
+詳細分析実行 → analysis_jobs → Gemini AI → analysis_results (detailed)
+      ↓                                         ↓
+AnalysisProgress（ポーリング2秒） → DetailedReport表示
+```
+
+### バックグラウンドジョブ
+- `@vercel/functions` の `waitUntil()` でレスポンス返却後に実行
+- 簡易分析: 設定作成時に自動実行（同一リクエスト内）
+- 詳細分析: POST → 202 Accepted → クライアントがポーリング
+
+### プレミアム機能
+- 現段階では全ユーザーに開放（`isPremium = true` ハードコード）
+- TODO: プレミアムチェック再有効化時は `profiles.is_premium` を参照
 
 ## Project Status
 
@@ -144,6 +222,13 @@ Phase 2 完了チケット:
 - 031: ヘッダー・フッター・ホームページ更新（3プラットフォームタブUI）
 - 032: Qiita APIクライアント & APIルート
 - 033: Zenn APIクライアント & APIルート
+- 034: 記事カードコンポーネント（Qiita/Zenn共通）
+- 035: Qiita検索ページ（ユーザー/キーワード）
+- 036: Zenn検索ページ（ユーザー/キーワード）
+- 037: Gemini AIクライアント & 分析ロジック
+- 038: 監視設定API（CRUD + 初回データ取得）
+- 039: 監視設定UIウィザード（5ステップ + チャンネル検索）
+- 040: ダッシュボード分析結果UI（タブナビ・詳細レポート）
 
 Phase 1 完了機能:
 - Channel search with autocomplete, Latest 50 videos analysis
