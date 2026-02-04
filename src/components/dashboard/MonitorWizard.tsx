@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Youtube,
@@ -17,6 +17,15 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import type { Platform, MonitorType, FetchCount } from '@/types/common';
+
+interface YouTubeChannelResult {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  subscriberCount: number;
+  videoCount: number;
+}
 
 interface MonitorWizardProps {
   onComplete: () => void;
@@ -92,6 +101,68 @@ export default function MonitorWizard({ onComplete, onCancel }: MonitorWizardPro
     error?: string;
   } | null>(null);
 
+  // チャンネル検索用
+  const [channelQuery, setChannelQuery] = useState('');
+  const [channelResults, setChannelResults] = useState<YouTubeChannelResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedChannel, setSelectedChannel] = useState<YouTubeChannelResult | null>(null);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const searchChannels = useCallback(async (query: string) => {
+    if (query.length < 2) {
+      setChannelResults([]);
+      setShowDropdown(false);
+      return;
+    }
+    setIsSearching(true);
+    try {
+      const res = await fetch(`/api/youtube/search?q=${encodeURIComponent(query)}`);
+      if (res.ok) {
+        const data = await res.json();
+        setChannelResults(data.channels || []);
+        setShowDropdown(true);
+      }
+    } catch {
+      // エラー時は候補を空に
+      setChannelResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }, []);
+
+  const handleChannelQueryChange = (value: string) => {
+    setChannelQuery(value);
+    setSelectedChannel(null);
+    setState((prev) => ({ ...prev, value: '', displayName: '' }));
+
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    searchTimeoutRef.current = setTimeout(() => searchChannels(value), 300);
+  };
+
+  const handleSelectChannel = (channel: YouTubeChannelResult) => {
+    setSelectedChannel(channel);
+    setChannelQuery(channel.title);
+    setShowDropdown(false);
+    setState((prev) => ({
+      ...prev,
+      value: channel.id,
+      displayName: channel.title,
+    }));
+  };
+
+  // ドロップダウン外クリックで閉じる
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const platformConfig = state.platform ? PLATFORM_CONFIG[state.platform] : null;
   const accentColor = platformConfig?.color || '#FF0000';
 
@@ -139,19 +210,20 @@ export default function MonitorWizard({ onComplete, onCancel }: MonitorWizardPro
     }
   };
 
+  const isChannelSearch = state.platform === 'youtube' && state.type === 'channel';
+
   const getValuePlaceholder = () => {
     if (!state.platform || !state.type) return '';
     if (state.type === 'keyword') {
       return state.platform === 'youtube' ? '例: React チュートリアル' : '例: Next.js';
     }
-    if (state.platform === 'youtube') return '例: UC_x5XG1OV2P6uZZ5FSM9Ttw';
     if (state.platform === 'qiita') return '例: Qiita';
     return '例: catnose99';
   };
 
   const getValueLabel = () => {
     if (state.type === 'keyword') return 'キーワード';
-    if (state.platform === 'youtube') return 'チャンネルID';
+    if (state.platform === 'youtube') return 'チャンネル';
     return 'ユーザーID / ユーザー名';
   };
 
@@ -290,35 +362,125 @@ export default function MonitorWizard({ onComplete, onCancel }: MonitorWizardPro
             <div>
               <h3 className="text-xl font-bold mb-6">{getValueLabel()}を入力</h3>
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {getValueLabel()} <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={state.value}
-                    onChange={(e) => setState({ ...state, value: e.target.value })}
-                    placeholder={getValuePlaceholder()}
-                    className="input-field"
-                    style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
-                    autoFocus
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    表示名（任意）
-                  </label>
-                  <input
-                    type="text"
-                    value={state.displayName}
-                    onChange={(e) => setState({ ...state, displayName: e.target.value })}
-                    placeholder="例: AI関連キーワード"
-                    className="input-field"
-                  />
-                  <p className="text-xs text-gray-400 mt-1">
-                    設定を識別しやすくするための表示名です
-                  </p>
-                </div>
+                {isChannelSearch ? (
+                  /* YouTube チャンネル検索 */
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      チャンネル名で検索 <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative" ref={dropdownRef}>
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <input
+                          type="text"
+                          value={channelQuery}
+                          onChange={(e) => handleChannelQueryChange(e.target.value)}
+                          onFocus={() => channelResults.length > 0 && setShowDropdown(true)}
+                          placeholder="例: ヒカキン、TOKYOMX"
+                          className="input-field pl-10"
+                          style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
+                          autoFocus
+                        />
+                        {isSearching && (
+                          <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-gray-400" />
+                        )}
+                      </div>
+
+                      {/* 検索結果ドロップダウン */}
+                      {showDropdown && channelResults.length > 0 && (
+                        <div className="absolute z-10 w-full mt-1 bg-white dark:bg-[#1a1a1a] rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 max-h-64 overflow-y-auto">
+                          {channelResults.map((ch) => (
+                            <button
+                              key={ch.id}
+                              onClick={() => handleSelectChannel(ch)}
+                              className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
+                            >
+                              {ch.thumbnail ? (
+                                <img
+                                  src={ch.thumbnail}
+                                  alt={ch.title}
+                                  className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                                />
+                              ) : (
+                                <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                                  <Youtube className="w-5 h-5 text-gray-400" />
+                                </div>
+                              )}
+                              <div className="min-w-0 flex-1">
+                                <div className="font-medium text-sm truncate">{ch.title}</div>
+                                <div className="text-xs text-gray-400">
+                                  {ch.subscriberCount > 0 && `${(ch.subscriberCount / 10000).toFixed(1)}万人`}
+                                  {ch.videoCount > 0 && ` · ${ch.videoCount}本`}
+                                </div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      {showDropdown && channelResults.length === 0 && channelQuery.length >= 2 && !isSearching && (
+                        <div className="absolute z-10 w-full mt-1 bg-white dark:bg-[#1a1a1a] rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 px-4 py-3">
+                          <p className="text-sm text-gray-400">チャンネルが見つかりません</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 選択済みチャンネル表示 */}
+                    {selectedChannel && (
+                      <div className="mt-3 flex items-center gap-3 p-3 rounded-lg border-2" style={{ borderColor: accentColor, backgroundColor: `${accentColor}10` }}>
+                        {selectedChannel.thumbnail ? (
+                          <img
+                            src={selectedChannel.thumbnail}
+                            alt={selectedChannel.title}
+                            className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                            <Youtube className="w-5 h-5 text-gray-400" />
+                          </div>
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <div className="font-medium text-sm">{selectedChannel.title}</div>
+                          <div className="text-xs text-gray-400 truncate">ID: {selectedChannel.id}</div>
+                        </div>
+                        <CheckCircle className="w-5 h-5 flex-shrink-0" style={{ color: accentColor }} />
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* キーワード / ユーザーID 入力 */
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      {getValueLabel()} <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={state.value}
+                      onChange={(e) => setState({ ...state, value: e.target.value })}
+                      placeholder={getValuePlaceholder()}
+                      className="input-field"
+                      style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
+                      autoFocus
+                    />
+                  </div>
+                )}
+                {!isChannelSearch && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      表示名（任意）
+                    </label>
+                    <input
+                      type="text"
+                      value={state.displayName}
+                      onChange={(e) => setState({ ...state, displayName: e.target.value })}
+                      placeholder="例: AI関連キーワード"
+                      className="input-field"
+                    />
+                    <p className="text-xs text-gray-400 mt-1">
+                      設定を識別しやすくするための表示名です
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           )}
