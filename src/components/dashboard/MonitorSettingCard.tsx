@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import type { MonitorSetting } from '@/types/monitor';
 import type { Platform, MonitorType } from '@/types/common';
+import { formatRelativeTime } from '@/lib/format-utils';
 
 interface MonitorSettingCardProps {
   setting: MonitorSetting;
@@ -20,32 +21,17 @@ interface MonitorSettingCardProps {
   onDelete: (setting: MonitorSetting) => void;
 }
 
-const PLATFORM_MAP: Record<Platform, { label: string; icon: typeof Youtube; color: string }> = {
+export const PLATFORM_MAP: Record<Platform, { label: string; icon: typeof Youtube; color: string }> = {
   youtube: { label: 'YouTube', icon: Youtube, color: '#FF0000' },
   qiita: { label: 'Qiita', icon: Code2, color: '#55C500' },
   zenn: { label: 'Zenn', icon: BookOpen, color: '#3EA8FF' },
 };
 
-const TYPE_MAP: Record<MonitorType, { label: string; icon: typeof Search }> = {
+export const TYPE_MAP: Record<MonitorType, { label: string; icon: typeof Search }> = {
   keyword: { label: 'キーワード', icon: Search },
   channel: { label: 'チャンネル', icon: Users },
   user: { label: 'ユーザー', icon: User },
 };
-
-function formatRelativeTime(dateStr: string): string {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMin = Math.floor(diffMs / 60000);
-  const diffHour = Math.floor(diffMs / 3600000);
-  const diffDay = Math.floor(diffMs / 86400000);
-
-  if (diffMin < 1) return 'たった今';
-  if (diffMin < 60) return `${diffMin}分前`;
-  if (diffHour < 24) return `${diffHour}時間前`;
-  if (diffDay < 30) return `${diffDay}日前`;
-  return date.toLocaleDateString('ja-JP');
-}
 
 export default function MonitorSettingCard({
   setting,

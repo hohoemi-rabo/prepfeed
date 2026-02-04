@@ -28,10 +28,14 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type') as AnalysisType | null;
 
-    // 分析結果を取得
+    // 分析結果を取得（type=simple の場合は result も含める）
+    const selectFields = type === 'simple'
+      ? 'id, user_id, setting_id, analysis_type, status, result, error_message, created_at, completed_at'
+      : 'id, user_id, setting_id, analysis_type, status, error_message, created_at, completed_at';
+
     let query = supabase
       .from('analysis_results')
-      .select('id, user_id, setting_id, analysis_type, status, error_message, created_at, completed_at')
+      .select(selectFields)
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 

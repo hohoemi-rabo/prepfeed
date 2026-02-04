@@ -40,3 +40,23 @@ export function formatJapaneseSubscribers(num: number): string {
 export function formatJapaneseViews(num: number): string {
   return `${formatJapaneseNumber(num)}回`;
 }
+
+/**
+ * 日時を相対時間の日本語テキストに変換
+ * @param dateStr ISO 8601形式の日時文字列
+ * @returns 相対時間の文字列（例: 「たった今」「5分前」「3日前」）
+ */
+export function formatRelativeTime(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  const diffHour = Math.floor(diffMs / 3600000);
+  const diffDay = Math.floor(diffMs / 86400000);
+
+  if (diffMin < 1) return 'たった今';
+  if (diffMin < 60) return `${diffMin}分前`;
+  if (diffHour < 24) return `${diffHour}時間前`;
+  if (diffDay < 30) return `${diffDay}日前`;
+  return date.toLocaleDateString('ja-JP');
+}
