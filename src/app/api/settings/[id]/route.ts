@@ -161,7 +161,14 @@ export async function DELETE(
       );
     }
 
-    // 関連する collected_data を先に削除（FK制約）
+    // 関連する簡易分析結果を削除（詳細分析は残す）
+    await supabase
+      .from('analysis_results')
+      .delete()
+      .eq('setting_id', id)
+      .eq('user_id', user.id);
+
+    // 関連する collected_data を削除（FK制約）
     await supabase
       .from('collected_data')
       .delete()
