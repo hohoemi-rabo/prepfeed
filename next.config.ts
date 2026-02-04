@@ -37,6 +37,16 @@ const nextConfig: NextConfig = {
         hostname: 'qiita-image-store.s3.ap-northeast-1.amazonaws.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/zenn/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'storage.googleapis.com',
+        pathname: '/zenn-user-upload/**',
+      },
     ],
   },
 };
