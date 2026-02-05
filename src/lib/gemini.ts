@@ -10,7 +10,7 @@ import {
 } from '@google/generative-ai';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const MODEL_NAME = 'gemini-2.5-flash';
+const MODEL_NAME = 'gemini-3-flash-preview';
 const MAX_RETRIES = 3;
 const BASE_DELAY_MS = 1000;
 
