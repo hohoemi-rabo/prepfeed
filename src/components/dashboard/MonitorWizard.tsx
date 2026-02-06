@@ -16,6 +16,7 @@ import {
   CheckCircle,
   AlertCircle,
 } from 'lucide-react';
+import Image from 'next/image';
 import type { Platform, MonitorType, FetchCount } from '@/types/common';
 
 interface YouTubeChannelResult {
@@ -396,9 +397,11 @@ export default function MonitorWizard({ onComplete, onCancel }: MonitorWizardPro
                               className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
                             >
                               {ch.thumbnail ? (
-                                <img
+                                <Image
                                   src={ch.thumbnail}
                                   alt={ch.title}
+                                  width={40}
+                                  height={40}
                                   className="w-10 h-10 rounded-full object-cover flex-shrink-0"
                                 />
                               ) : (
@@ -429,9 +432,11 @@ export default function MonitorWizard({ onComplete, onCancel }: MonitorWizardPro
                     {selectedChannel && (
                       <div className="mt-3 flex items-center gap-3 p-3 rounded-lg border-2" style={{ borderColor: accentColor, backgroundColor: `${accentColor}10` }}>
                         {selectedChannel.thumbnail ? (
-                          <img
+                          <Image
                             src={selectedChannel.thumbnail}
                             alt={selectedChannel.title}
+                            width={40}
+                            height={40}
                             className="w-10 h-10 rounded-full object-cover flex-shrink-0"
                           />
                         ) : (
