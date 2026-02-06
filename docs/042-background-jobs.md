@@ -12,9 +12,9 @@
 
 ### バックグラウンドジョブ実行（Vercel waitUntil）
 
-- [ ] `@vercel/functions` パッケージの `waitUntil` を使用
-- [ ] `POST /api/analysis/detailed` でジョブ登録 + バックグラウンド起動
-- [ ] 即座に 202 Accepted を返却
+- [x] `@vercel/functions` パッケージの `waitUntil` を使用
+- [x] `POST /api/analysis/detailed` でジョブ登録 + バックグラウンド起動
+- [x] 即座に 202 Accepted を返却
 
 ### ジョブ処理フロー
 
@@ -42,10 +42,10 @@
 
 ### ジョブ管理ロジック（`lib/background-jobs.ts`）
 
-- [ ] `createAnalysisJob(userId, analysisId, type)` — ジョブレコード作成
-- [ ] `updateJobStatus(jobId, status, error?)` — ステータス更新
-- [ ] `getJobStatus(jobId)` — ステータス取得
-- [ ] `runDetailedAnalysis(userId, analysisId, jobId)` — メイン処理
+- [x] `createAnalysisJob(userId, analysisId, type)` — ジョブレコード作成
+- [x] `updateJobStatus(jobId, status, error?)` — ステータス更新
+- [x] `getJobStatus(jobId)` — ステータス取得
+- [x] `runDetailedAnalysis(userId, analysisId, jobId)` — メイン処理
 
 ### 実装例
 
@@ -73,31 +73,31 @@ export async function POST(request: Request) {
 
 ### Cloudflare移行時の対応
 
-- [ ] Cloudflare Workers Queue への移行を見据えた抽象化
-- [ ] `lib/background-jobs.ts` にプラットフォーム差分を閉じ込める
+- [x] Cloudflare Workers Queue への移行を見据えた抽象化
+- [x] `lib/background-jobs.ts` にプラットフォーム差分を閉じ込める
 
 ### エラーハンドリング
 
-- [ ] Gemini APIタイムアウト → ジョブを failed に更新
-- [ ] 不正なJSON応答 → パース試行、失敗時はエラー保存
-- [ ] 予期しない例外 → ジョブを failed に更新 + エラーメッセージ保存
-- [ ] Vercel Functions タイムアウト（300秒 Pro / 60秒 Hobby）への対応
+- [x] Gemini APIタイムアウト → ジョブを failed に更新
+- [x] 不正なJSON応答 → パース試行、失敗時はエラー保存
+- [x] 予期しない例外 → ジョブを failed に更新 + エラーメッセージ保存
+- [x] Vercel Functions タイムアウト（300秒 Pro / 60秒 Hobby）への対応
 
 ### タイムアウト対策
 
-- [ ] 処理開始時刻を記録
-- [ ] 残り時間に応じてGemini API呼び出しの制限
-- [ ] Hobbyプランでは簡易版の詳細分析にフォールバック
+- [x] 処理開始時刻を記録
+- [x] 残り時間に応じてGemini API呼び出しの制限
+- [x] Hobbyプランでは簡易版の詳細分析にフォールバック
 
 ## 受け入れ条件
 
-- [ ] `POST /api/analysis/detailed` が即座に 202 を返す
-- [ ] バックグラウンドでGemini API呼び出しが実行される
-- [ ] analysis_jobs のステータスが queued → processing → completed と遷移する
-- [ ] analysis_results に分析結果が保存される
-- [ ] `GET /api/analysis/status/[id]` でステータス確認ができる
-- [ ] エラー発生時にジョブが failed になりエラーメッセージが保存される
-- [ ] Vercel Functions のタイムアウト内で完了する
+- [x] `POST /api/analysis/detailed` が即座に 202 を返す
+- [x] バックグラウンドでGemini API呼び出しが実行される
+- [x] analysis_jobs のステータスが queued → processing → completed と遷移する
+- [x] analysis_results に分析結果が保存される
+- [x] `GET /api/analysis/status/[id]` でステータス確認ができる
+- [x] エラー発生時にジョブが failed になりエラーメッセージが保存される
+- [x] Vercel Functions のタイムアウト内で完了する
 
 ## 依存関係
 
@@ -107,7 +107,7 @@ export async function POST(request: Request) {
 ## 関連ファイル
 
 - `src/lib/background-jobs.ts`（新規）
-- `src/app/api/analysis/detailed/route.ts`（037で作成、ここでwaitUntil統合）
+- `src/app/api/analysis/detailed/route.ts`（037で作成、background-jobs.ts に統合）
 - `src/app/api/analysis/status/[id]/route.ts`（037で作成）
 
 ## 参照

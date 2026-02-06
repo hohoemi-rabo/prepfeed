@@ -9,6 +9,11 @@ import { NextResponse } from 'next/server';
 import { waitUntil } from '@vercel/functions';
 import { createClient } from '@/lib/supabase/server';
 import { runDetailedAnalysis } from '@/lib/analysis';
+import {
+  createAnalysisRecord,
+  createAnalysisJob,
+  hasActiveDetailedJob,
+} from '@/lib/background-jobs';
 
 export async function POST() {
   try {
@@ -28,60 +33,42 @@ export async function POST() {
     }
 
     // 既に処理中の詳細分析がないかチェック
-    const { data: existingJobs } = await supabase
-      .from('analysis_results')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('analysis_type', 'detailed')
-      .in('status', ['pending', 'processing'])
-      .limit(1);
+    const { active, analysisId: existingId } = await hasActiveDetailedJob(
+      supabase,
+      user.id
+    );
 
-    if (existingJobs && existingJobs.length > 0) {
+    if (active) {
       return NextResponse.json(
         {
           error: '既に分析が実行中です。完了後に再度お試しください。',
-          analysisId: existingJobs[0].id,
+          analysisId: existingId,
         },
         { status: 409 }
       );
     }
 
     // analysis_results に pending レコード作成
-    const { data: analysisRecord, error: analysisError } = await supabase
-      .from('analysis_results')
-      .insert({
-        user_id: user.id,
-        analysis_type: 'detailed',
-        status: 'pending',
-      })
-      .select('id')
-      .single();
-
-    if (analysisError || !analysisRecord) {
-      console.error('[Detailed Analysis API] Insert analysis error:', analysisError?.message);
-      return NextResponse.json(
-        { error: '分析レコードの作成に失敗しました' },
-        { status: 500 }
-      );
-    }
+    const analysisRecord = await createAnalysisRecord(
+      supabase,
+      user.id,
+      'detailed'
+    );
 
     // analysis_jobs に queued レコード作成
-    const { data: jobRecord, error: jobError } = await supabase
-      .from('analysis_jobs')
-      .insert({
-        user_id: user.id,
-        analysis_id: analysisRecord.id,
-        job_type: 'detailed',
-        status: 'queued',
-        priority: 0,
-        payload: {},
-      })
-      .select('id')
-      .single();
-
-    if (jobError || !jobRecord) {
-      console.error('[Detailed Analysis API] Insert job error:', jobError?.message);
-      // 分析レコードを failed に更新
+    let jobRecord: { id: string };
+    try {
+      jobRecord = await createAnalysisJob(
+        supabase,
+        user.id,
+        analysisRecord.id
+      );
+    } catch (jobError) {
+      console.error(
+        '[Detailed Analysis API] Job creation error:',
+        jobError instanceof Error ? jobError.message : jobError
+      );
+      // ジョブ未作成のため analysis_results を直接 failed に更新
       await supabase
         .from('analysis_results')
         .update({ status: 'failed', error_message: 'ジョブの作成に失敗しました' })
