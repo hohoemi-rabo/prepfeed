@@ -12,7 +12,7 @@ PrepFeed のコア機能は「自動でデータを収集・蓄積・分析す�
 
 ### Vercel Cron 設定
 
-- [ ] `vercel.json` に Cron 設定追加
+- [x] `vercel.json` に Cron 設定追加
   ```json
   {
     "crons": [
@@ -29,9 +29,9 @@ PrepFeed のコア機能は「自動でデータを収集・蓄積・分析す�
 
 #### `POST /api/batch`
 
-- [ ] `CRON_SECRET` 環境変数によるアクセス保護
-- [ ] Vercel Cron の `Authorization` ヘッダー検証
-- [ ] 処理フロー:
+- [x] `CRON_SECRET` 環境変数によるアクセス保護
+- [x] Vercel Cron の `Authorization` ヘッダー検証
+- [x] 処理フロー:
   1. アクティブな監視設定を全件取得
   2. ユーザーごとにグループ化
   3. 各ユーザー × 各監視設定の処理:
@@ -45,52 +45,52 @@ PrepFeed のコア機能は「自動でデータを収集・蓄積・分析す�
 
 #### `POST /api/batch/manual`
 
-- [ ] 管理者用の手動バッチ実行エンドポイント
-- [ ] 認証 + is_premium チェック
-- [ ] 特定ユーザーの設定のみ実行可能
+- [x] 管理者用の手動バッチ実行エンドポイント
+- [x] 認証 + is_premium チェック
+- [x] 特定ユーザーの設定のみ実行可能
 
 ### データ取得ロジック（`lib/batch-processor.ts`）
 
-- [ ] `processAllSettings()` — 全設定の処理
-- [ ] `processUserSettings(userId, settings)` — ユーザー単位の処理
-- [ ] `fetchData(setting)` — プラットフォーム別のデータ取得
+- [x] `processAllSettings()` — 全設定の処理
+- [x] `processUserSettings(userId, settings)` — ユーザー単位の処理
+- [x] `fetchData(setting)` — プラットフォーム別のデータ取得
   - YouTube: 既存の youtube.ts を利用
   - Qiita: qiita.ts を利用
   - Zenn: zenn.ts を利用
-- [ ] 取得件数対応（50/100/200）
+- [x] 取得件数対応（50/100/200）
   - APIの1回あたり取得上限に応じてページネーション
 
 ### Upsert ロジック（`lib/data-collector.ts`）
 
-- [ ] `upsertCollectedData(userId, settingId, data)` — collected_data への差分更新
-- [ ] ユニーク制約 `(user_id, setting_id, content_id)` を利用した ON CONFLICT UPSERT
-- [ ] 変動値（views, likes, comments, stocks, growth_rate）のみ更新
+- [x] `upsertCollectedData(userId, settingId, data)` — collected_data への差分更新
+- [x] ユニーク制約 `(user_id, setting_id, content_id)` を利用した ON CONFLICT UPSERT
+- [x] 変動値（views, likes, comments, stocks, growth_rate）のみ更新
 
 ### エラーハンドリング
 
-- [ ] 個別設定の失敗が他の設定に影響しない
-- [ ] Gemini API のレートリミット対応（簡易分析失敗時はデータ収集のみで続行）
-- [ ] 外部APIレートリミット時の待機処理
-- [ ] タイムアウト対策（Vercel Functions の制限: 60秒）
+- [x] 個別設定の失敗が他の設定に影響しない
+- [x] Gemini API のレートリミット対応（簡易分析失敗時はデータ収集のみで続行）
+- [x] 外部APIレートリミット時の待機処理
+- [x] タイムアウト対策（Vercel Functions の制限: 60秒）
   - 設定数が多い場合の分割実行を考慮
 
 ### ログ記録
 
-- [ ] 各設定の実行結果を `fetch_logs` テーブルに記録
-- [ ] ステータス: `success` / `error`
-- [ ] 取得件数・エラーメッセージを記録
-- [ ] `last_fetched_at` を更新
+- [x] 各設定の実行結果を `fetch_logs` テーブルに記録
+- [x] ステータス: `success` / `error`
+- [x] 取得件数・エラーメッセージを記録
+- [x] `last_fetched_at` を更新
 
 ## 受け入れ条件
 
-- [ ] `POST /api/batch` でバッチ処理が実行される
-- [ ] `CRON_SECRET` なしではアクセスが拒否される
-- [ ] アクティブな監視設定ごとにデータが取得される
-- [ ] 取得データが `collected_data` テーブルに保存される
-- [ ] 各監視設定の簡易分析が `analysis_results` に保存される
-- [ ] `fetch_logs` に実行結果が記録される
-- [ ] 個別エラーが他の処理に影響しない
-- [ ] Vercel Functions のタイムアウト内で完了する
+- [x] `POST /api/batch` でバッチ処理が実行される
+- [x] `CRON_SECRET` なしではアクセスが拒否される
+- [x] アクティブな監視設定ごとにデータが取得される
+- [x] 取得データが `collected_data` テーブルに保存される
+- [x] 各監視設定の簡易分析が `analysis_results` に保存される
+- [x] `fetch_logs` に実行結果が記録される
+- [x] 個別エラーが他の処理に影響しない
+- [x] Vercel Functions のタイムアウト内で完了する
 
 ## 依存関係
 
@@ -105,6 +105,8 @@ PrepFeed のコア機能は「自動でデータを収集・蓄積・分析す�
 - `src/app/api/batch/manual/route.ts`（新規）
 - `src/lib/batch-processor.ts`（新規）
 - `src/lib/data-collector.ts`（新規 — collected_data Upsert ロジック）
+- `src/lib/supabase/admin.ts`（新規 — Service Role Client）
+- `src/lib/monitor.ts`（修正 — 関数 export 追加）
 - `vercel.json`（更新）
 
 ## 参照
@@ -116,3 +118,4 @@ PrepFeed のコア機能は「自動でデータを収集・蓄積・分析す�
 - Vercel Hobby プランでは Cron は1日1回まで
 - Vercel Functions のタイムアウトは60秒（Hobby）/ 300秒（Pro）
 - 大量の監視設定がある場合、バッチを分割する設計を検討すること
+- 環境変数 `SUPABASE_SERVICE_ROLE_KEY` と `CRON_SECRET` の追加が必要

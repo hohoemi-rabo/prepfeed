@@ -55,7 +55,7 @@ export function validateFetchCount(count: unknown): count is FetchCount {
 
 // ─── データ変換 ───
 
-interface CollectedDataInsert {
+export interface CollectedDataInsert {
   user_id: string;
   setting_id: string;
   platform: Platform;
@@ -74,7 +74,7 @@ interface CollectedDataInsert {
   growth_rate?: number;
 }
 
-function transformYouTubeData(
+export function transformYouTubeData(
   videos: YouTubeVideo[],
   userId: string,
   settingId: string
@@ -98,7 +98,7 @@ function transformYouTubeData(
   }));
 }
 
-function transformQiitaData(
+export function transformQiitaData(
   articles: QiitaArticle[],
   userId: string,
   settingId: string
@@ -120,7 +120,7 @@ function transformQiitaData(
   }));
 }
 
-function transformZennData(
+export function transformZennData(
   articles: ZennArticle[],
   userId: string,
   settingId: string
@@ -249,7 +249,7 @@ export async function fetchInitialData(
 /**
  * プラットフォーム別にデータを取得
  */
-async function fetchPlatformData(
+export async function fetchPlatformData(
   platform: Platform,
   type: MonitorType,
   value: string,
@@ -281,7 +281,7 @@ async function fetchPlatformData(
 
 // ─── Fetch Log ───
 
-async function recordFetchLog(
+export async function recordFetchLog(
   supabase: Awaited<ReturnType<typeof createClient>>,
   userId: string,
   settingId: string,
