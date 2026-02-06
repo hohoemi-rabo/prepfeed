@@ -251,10 +251,18 @@ export default function DashboardPage() {
 
         {/* 取得ログセクション */}
         <section className="card">
-          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <Clock className="w-5 h-5 text-gray-400" />
-            取得ログ
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold flex items-center gap-2">
+              <Clock className="w-5 h-5 text-gray-400" />
+              取得ログ
+            </h2>
+            <Link
+              href="/dashboard/logs"
+              className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            >
+              すべて見る
+            </Link>
+          </div>
           <FetchLogList logs={logs} />
         </section>
       </div>
