@@ -23,14 +23,14 @@ npm run lint       # Run ESLint
 
 ## Key Technologies
 
-- **Next.js 15.5.11** - App Router, API Routes, Server/Client Components
+- **Next.js 15.5.12** - App Router, API Routes, Server/Client Components
 - **React 19.1.0** - UI Components
 - **TypeScript 5** - Strict mode
 - **Tailwind CSS 3.4.17** - Styling with CSS variables for theming
 - **Zustand** - Sort state management
 - **Recharts** - Data visualization (dynamic import)
 - **Supabase** - Auth, PostgreSQL database, RLS
-- **Gemini 2.5 Flash** - AI分析（簡易分析・詳細分析）
+- **Gemini 3 Flash Preview** - AI分析（簡易分析・詳細分析）
 - **Vercel Analytics / OG / KV / Functions** - Analytics, OGP, Caching, Background Jobs
 
 ## Path Aliases
@@ -47,7 +47,8 @@ npm run lint       # Run ESLint
 │   ├── api/zenn/           # Zenn API (user/[username], keyword)
 │   ├── api/settings/       # 監視設定 CRUD API
 │   ├── api/analysis/       # 分析結果 API (list, detail, detailed, status)
-│   ├── api/logs/           # 取得ログ API
+│   ├── api/logs/           # 取得ログ API (pagination, filters)
+│   ├── api/batch/          # バッチ処理 (Vercel Cron + manual)
 │   ├── api/og/             # Dynamic OGP image generation
 │   ├── auth/               # Auth pages (login, callback)
 │   ├── youtube/channel/[id]/    # Channel detail page
@@ -57,6 +58,7 @@ npm run lint       # Run ESLint
 │   │   ├── page.tsx             # 分析結果一覧 + 詳細分析実行
 │   │   ├── analysis/[id]/       # 詳細分析レポートページ
 │   │   ├── settings/            # 監視設定管理ページ
+│   │   ├── logs/                # 取得ログ一覧ページ（フィルタ・ページネーション）
 │   │   └── export/              # エクスポート（プレースホルダー）
 │   ├── contact/            # Contact page
 │   ├── disclaimer/         # Disclaimer page
@@ -75,19 +77,26 @@ npm run lint       # Run ESLint
 │       ├── AnalysisCard.tsx       # 簡易分析カード（スコア/サマリー）
 │       ├── AnalysisProgress.tsx   # 分析プログレスバー（ポーリング）
 │       ├── DetailedReport.tsx     # 詳細分析レポート（4セクション）
-│       ├── FetchLogList.tsx       # 取得ログ一覧
+│       ├── FetchLogList.tsx       # 取得ログ一覧（compact/full variant）
+│       ├── FetchLogFilters.tsx    # ログフィルタ（platform/status）
 │       ├── SettingsCompactList.tsx # 設定コンパクト表示
 │       └── UpgradeBanner.tsx      # プレミアムバナー（現在非表示）
 ├── hooks/                  # Custom React Hooks
 │   └── useAnalysisStatus.ts # 分析ステータスポーリング（2秒間隔）
 ├── lib/                    # Utilities
-│   ├── supabase/           # Supabase client (client.ts, server.ts)
+│   ├── supabase/           # Supabase client (client.ts, server.ts, admin.ts)
 │   ├── youtube.ts          # YouTube API client (singleton)
 │   ├── qiita.ts            # Qiita API client (singleton)
 │   ├── zenn.ts             # Zenn API client (singleton, 非公式API)
 │   ├── gemini.ts           # Gemini AI client (singleton, retry付き)
 │   ├── monitor.ts          # 監視設定ビジネスロジック
 │   ├── analysis.ts         # AI分析ビジネスロジック
+│   ├── data-collector.ts   # データ収集（upsert, fetch log記録）
+│   ├── batch-processor.ts  # バッチ処理（全設定一括 / ユーザー別）
+│   ├── background-jobs.ts  # ジョブ管理ユーティリティ
+│   ├── fetch-log.ts        # 取得ログユーティリティ
+│   ├── error-handler.ts    # エラー分類（15種別）
+│   ├── tracking.ts         # Vercel Analytics イベント追跡
 │   ├── format-utils.ts     # 数値・日時フォーマット
 │   ├── cache.ts            # Cache (Vercel KV / in-memory)
 │   └── rate-limiter.ts     # Rate limiting
@@ -138,10 +147,12 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 Optional:
 ```bash
-GEMINI_API_KEY=...         # Gemini AI (分析機能に必須)
-QIITA_ACCESS_TOKEN=...     # Qiita API (なし: 60req/h, あり: 1,000req/h)
-KV_REST_API_URL=...        # Vercel KV (production)
-KV_REST_API_TOKEN=...      # Vercel KV (production)
+GEMINI_API_KEY=...             # Gemini AI (分析機能に必須)
+QIITA_ACCESS_TOKEN=...         # Qiita API (なし: 60req/h, あり: 1,000req/h)
+KV_REST_API_URL=...            # Vercel KV (production)
+KV_REST_API_TOKEN=...          # Vercel KV (production)
+SUPABASE_SERVICE_ROLE_KEY=...  # バッチ処理用 Admin Client (RLSバイパス)
+CRON_SECRET=...                # Vercel Cronアクセス保護 (Bearer token)
 ```
 
 ## Supabase
@@ -150,6 +161,7 @@ KV_REST_API_TOKEN=...      # Vercel KV (production)
 - **Region**: ap-northeast-1 (Tokyo)
 - Browser client: `src/lib/supabase/client.ts` → `createClient()`
 - Server client: `src/lib/supabase/server.ts` → `createClient()` (async)
+- Admin client: `src/lib/supabase/admin.ts` → `createAdminClient()` (service role, RLSバイパス)
 - Middleware: `src/middleware.ts` — session refresh
 
 ### Database Tables
@@ -187,6 +199,7 @@ KV_REST_API_TOKEN=...      # Vercel KV (production)
 - `/dashboard` — 分析結果一覧 + 詳細分析実行
 - `/dashboard/settings` — 監視設定管理（ウィザード + 一覧）
 - `/dashboard/analysis/[id]` — 詳細分析レポート表示
+- `/dashboard/logs` — 取得ログ一覧（フィルタ + ページネーション）
 - `/dashboard/export` — エクスポート（プレースホルダー）
 
 ### データフロー
@@ -204,6 +217,15 @@ AnalysisProgress（ポーリング2秒） → DetailedReport表示
 - `@vercel/functions` の `waitUntil()` でレスポンス返却後に実行
 - 簡易分析: 設定作成時に自動実行（同一リクエスト内）
 - 詳細分析: POST → 202 Accepted → クライアントがポーリング
+- ジョブ管理ユーティリティ: `background-jobs.ts`（レコード作成・ステータス更新・重複チェック）
+
+### バッチ処理 (Vercel Cron)
+- `POST /api/batch` — 全ユーザーの全設定を処理（CRON_SECRET認証）
+- `POST /api/batch/manual` — ログインユーザー自身の設定のみ処理
+- Vercel Cron: 毎日 UTC 18:00 (JST 03:00) に自動実行
+- 時間予算: maxDuration - 10秒で打ち切り（Vercel Functions timeout対策）
+- 設定間1秒ディレイ（APIレートリミット対策）
+- Admin Client使用（RLSバイパスで全ユーザーデータにアクセス）
 
 ### プレミアム機能
 - 現段階では全ユーザーに開放（`isPremium = true` ハードコード）
@@ -229,6 +251,10 @@ Phase 2 完了チケット:
 - 038: 監視設定API（CRUD + 初回データ取得）
 - 039: 監視設定UIウィザード（5ステップ + チャンネル検索）
 - 040: ダッシュボード分析結果UI（タブナビ・詳細レポート）
+- 041: バッチ処理（Vercel Cron + Admin Client + 手動実行）
+- 042: バックグラウンドジョブ管理ユーティリティ
+- 043: 取得ログ（ストレージ・表示・フィルタ・ページネーション）
+- 044: エラーハンドリング強化（15種別 + Phase 2トラッキング）
 
 Phase 1 完了機能:
 - Channel search with autocomplete, Latest 50 videos analysis

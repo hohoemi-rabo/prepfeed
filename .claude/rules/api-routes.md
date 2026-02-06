@@ -4,6 +4,10 @@ paths:
   - "src/lib/cache.ts"
   - "src/lib/rate-limiter.ts"
   - "src/lib/error-handler.ts"
+  - "src/lib/data-collector.ts"
+  - "src/lib/batch-processor.ts"
+  - "src/lib/background-jobs.ts"
+  - "src/lib/fetch-log.ts"
   - "src/lib/qiita.ts"
   - "src/lib/zenn.ts"
 ---
@@ -56,7 +60,14 @@ paths:
 
 | Route | Method | Purpose |
 |-------|--------|---------|
-| `/api/logs` | GET | 取得ログ一覧（`?limit=5`、最大50） |
+| `/api/logs` | GET | 取得ログ一覧（`?page=1&limit=20&platform=&status=`） |
+
+### バッチ API Routes
+
+| Route | Method | Auth | Purpose |
+|-------|--------|------|---------|
+| `/api/batch` | POST | `Authorization: Bearer <CRON_SECRET>` | Vercel Cron バッチ処理（全ユーザー） |
+| `/api/batch/manual` | POST | Supabase Auth (cookie) | 手動バッチ（自分の設定のみ） |
 
 ## Caching Strategy (`lib/cache.ts`)
 
@@ -73,8 +84,11 @@ paths:
 
 ## Error Handling (`lib/error-handler.ts`)
 
-- 6 error types: NOT_FOUND, QUOTA_EXCEEDED, NETWORK, RATE_LIMIT, INVALID, UNKNOWN
-- Each type has retry logic and user-friendly messages
+- 15 error types (Phase 1: 6 + Phase 2: 9):
+  - Phase 1: CHANNEL_NOT_FOUND, API_QUOTA_EXCEEDED, NETWORK_ERROR, RATE_LIMIT_EXCEEDED, INVALID_REQUEST, UNKNOWN_ERROR
+  - Phase 2: QIITA_API_ERROR, ZENN_API_ERROR, GEMINI_API_ERROR, GEMINI_PARSE_ERROR, ANALYSIS_TIMEOUT_ERROR, BATCH_TIMEOUT_ERROR, AUTH_REQUIRED, PREMIUM_REQUIRED, GOOGLE_AUTH_ERROR, GOOGLE_SHEETS_ERROR
+- Each type has retry logic, user-friendly Japanese messages, and optional hint
+- `classifyError()` — priority-ordered string matching for error detection
 - Exponential backoff: 1s → 2s → 4s → 8s (max 30s)
 
 ## Pattern: 新規APIルート追加手順（公開API）
@@ -109,3 +123,24 @@ return NextResponse.json({ ... }, { status: 202 });
 ```
 
 注意: `waitUntil` 内では新しい Supabase クライアントを作成する（元のリクエストコンテキストが無効になるため）
+
+## ジョブ管理パターン (`lib/background-jobs.ts`)
+
+```typescript
+import { createAnalysisRecord, createAnalysisJob, updateJobStatus } from '@/lib/background-jobs';
+
+// 1. 分析レコード作成 → 2. ジョブ作成 → 3. バックグラウンドで処理 → 4. ステータス更新
+const analysisRecord = await createAnalysisRecord(supabase, userId, 'detailed');
+const job = await createAnalysisJob(supabase, userId, analysisRecord.id, 'detailed_analysis');
+// waitUntil 内で処理後:
+await updateJobStatus(supabase, job.id, 'completed');
+```
+
+## Admin Client パターン（バッチ処理用）
+
+```typescript
+import { createAdminClient } from '@/lib/supabase/admin';
+
+// Vercel Cron からの呼び出し（ユーザーセッションなし）
+const supabase = createAdminClient(); // SUPABASE_SERVICE_ROLE_KEY 使用、RLSバイパス
+```

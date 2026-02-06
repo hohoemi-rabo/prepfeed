@@ -5,6 +5,10 @@ paths:
   - "src/lib/monitor.ts"
   - "src/lib/analysis.ts"
   - "src/lib/gemini.ts"
+  - "src/lib/data-collector.ts"
+  - "src/lib/batch-processor.ts"
+  - "src/lib/background-jobs.ts"
+  - "src/lib/fetch-log.ts"
 ---
 
 # TypeScript 型定義ルール

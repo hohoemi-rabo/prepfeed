@@ -149,7 +149,14 @@ DetailedReport ← GET /api/analysis/[id] ← analysis_results (detailed)
 - 競合分析（トップパフォーマー、投稿パターン、共通タグ）
 - レコメンデーション（番号付きリスト）
 
-**FetchLogList** — 取得ログ一覧（最新5件）
+**FetchLogList** — 取得ログ一覧
+- `variant` prop: `'compact'`（ダッシュボード、最新5件）/ `'full'`（ログページ、全件）
+- Full: 展開可能エラーメッセージ、プラットフォームラベル、ステータスバッジ、絶対+相対日時
+
+**FetchLogFilters** — ログフィルタ
+- Platform: 全て / YouTube / Qiita / Zenn
+- Status: 全て / 成功 / エラー
+- ピルスタイルトグルボタン
 
 **SettingsCompactList** — 設定コンパクト表示（最大5件 + "すべて見る"リンク）
 

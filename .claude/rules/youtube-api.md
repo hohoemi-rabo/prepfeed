@@ -59,7 +59,7 @@ paths:
 ## Gemini AI Client (`lib/gemini.ts`)
 
 - Singleton pattern — `GeminiClient` class
-- Model: `gemini-2.5-flash`
+- Model: `gemini-3-flash-preview`
 - `generateJSON<T>(prompt)` — JSONレスポンスをパース
 - リトライ: 最大3回、指数バックオフ（1s → 2s → 4s）
 - 429 (rate limit), 503 (server error) でリトライ
@@ -83,4 +83,5 @@ paths:
 ## Tracking (`lib/tracking.ts`)
 
 Vercel Analytics event tracking:
-- `trackChannelSearch()`, `trackChannelView()`, `trackSortChange()`, `trackShare()`, `trackError()`
+- Phase 1: `trackChannelSearch()`, `trackChannelView()`, `trackSortChange()`, `trackShare()`, `trackError()`, `trackAPILimit()`, `trackPageView()`
+- Phase 2: `trackMonitorCreated()`, `trackDetailedAnalysis()`, `trackBatchComplete()`, `trackManualBatch()`, `trackPlatformSearch()`
