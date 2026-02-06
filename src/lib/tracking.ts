@@ -73,3 +73,58 @@ export function trackPageView(path: string, referrer?: string) {
   }
   track('page_view', data);
 }
+
+// ─── Phase 2 トラッキング ───
+
+/**
+ * 監視設定作成イベント
+ */
+export function trackMonitorCreated(platform: string, type: string) {
+  track('monitor_created', { platform, type });
+}
+
+/**
+ * 詳細分析実行イベント
+ */
+export function trackDetailedAnalysis(status: 'started' | 'completed' | 'failed') {
+  track('detailed_analysis', { status });
+}
+
+/**
+ * バッチ処理完了イベント
+ */
+export function trackBatchComplete(
+  succeeded: number,
+  failed: number,
+  skipped: number
+) {
+  track('batch_complete', {
+    succeeded: String(succeeded),
+    failed: String(failed),
+    skipped: String(skipped),
+  });
+}
+
+/**
+ * 手動バッチ実行イベント
+ */
+export function trackManualBatch(settingsCount: number) {
+  track('manual_batch', {
+    settings_count: String(settingsCount),
+  });
+}
+
+/**
+ * プラットフォーム別検索イベント
+ */
+export function trackPlatformSearch(
+  platform: string,
+  searchType: string,
+  resultCount: number
+) {
+  track('platform_search', {
+    platform,
+    search_type: searchType,
+    result_count: String(resultCount),
+  });
+}

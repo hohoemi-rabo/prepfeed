@@ -14,45 +14,45 @@ Phase 2 で Qiita / Zenn / Gemini AI / バッチ処理 / Google Sheets エクス
 
 既存の6種類に加えて以下を追加:
 
-- [ ] `QIITA_API_ERROR` — Qiita APIのエラー
-- [ ] `ZENN_API_ERROR` — Zenn APIのエラー（仕様変更含む）
-- [ ] `GEMINI_API_ERROR` — Gemini API呼び出しエラー
-- [ ] `GEMINI_PARSE_ERROR` — Gemini応答のJSONパースエラー
-- [ ] `ANALYSIS_TIMEOUT_ERROR` — 分析処理タイムアウト
-- [ ] `GOOGLE_AUTH_ERROR` — Google OAuthトークンエラー（エクスポート用）
-- [ ] `GOOGLE_SHEETS_ERROR` — Google Sheets エクスポートエラー
-- [ ] `BATCH_TIMEOUT_ERROR` — バッチ処理タイムアウト
-- [ ] `PREMIUM_REQUIRED` — 有料機能へのアクセス
+- [x] `QIITA_API_ERROR` — Qiita APIのエラー
+- [x] `ZENN_API_ERROR` — Zenn APIのエラー（仕様変更含む）
+- [x] `GEMINI_API_ERROR` — Gemini API呼び出しエラー
+- [x] `GEMINI_PARSE_ERROR` — Gemini応答のJSONパースエラー
+- [x] `ANALYSIS_TIMEOUT_ERROR` — 分析処理タイムアウト
+- [x] `GOOGLE_AUTH_ERROR` — Google OAuthトークンエラー（エクスポート用）
+- [x] `GOOGLE_SHEETS_ERROR` — Google Sheets エクスポートエラー
+- [x] `BATCH_TIMEOUT_ERROR` — バッチ処理タイムアウト
+- [x] `PREMIUM_REQUIRED` — 有料機能へのアクセス
 
 ### 各APIルートのエラー対応
 
-- [ ] Qiita API: レートリミット（1,000/時）超過、404
-- [ ] Zenn API: API仕様変更、レスポンス形式変更
-- [ ] Gemini API: レートリミット（15 RPM無料枠）、タイムアウト、不正JSON応答
-- [ ] 分析ジョブ: バックグラウンド処理失敗、ジョブステータス管理
-- [ ] Google OAuth: トークン期限切れ、リフレッシュ失敗（エクスポート時）
-- [ ] Google Sheets: セル数上限、APIクォータ超過（エクスポート時）
-- [ ] 監視設定API: バリデーションエラー、権限エラー
-- [ ] バッチ処理: 個別失敗の隔離、タイムアウト
+- [x] Qiita API: レートリミット（1,000/時）超過、404
+- [x] Zenn API: API仕様変更、レスポンス形式変更
+- [x] Gemini API: レートリミット（15 RPM無料枠）、タイムアウト、不正JSON応答
+- [x] 分析ジョブ: バックグラウンド処理失敗、ジョブステータス管理
+- [x] Google OAuth: トークン期限切れ、リフレッシュ失敗（エクスポート時）
+- [x] Google Sheets: セル数上限、APIクォータ超過（エクスポート時）
+- [x] 監視設定API: バリデーションエラー、権限エラー
+- [x] バッチ処理: 個別失敗の隔離、タイムアウト
 
 ### ユーザー向けエラーメッセージ
 
-- [ ] 各エラー種別に日本語のユーザーフレンドリーメッセージ
-- [ ] リトライ可否の表示
-- [ ] 対処方法のヒント表示
+- [x] 各エラー種別に日本語のユーザーフレンドリーメッセージ
+- [x] リトライ可否の表示
+- [x] 対処方法のヒント表示
 
 ### エラートラッキング
 
-- [ ] 新規エラー種別の Vercel Analytics 追跡追加
-- [ ] バッチ処理のエラー率モニタリング
+- [x] 新規エラー種別の Vercel Analytics 追跡追加
+- [x] バッチ処理のエラー率モニタリング
 
 ## 受け入れ条件
 
-- [ ] 全API ルートで適切なHTTPステータスコードが返る
-- [ ] 各エラーに日本語メッセージが設定されている
-- [ ] 外部API障害時にアプリが落ちない
-- [ ] バッチ処理で個別エラーが他の処理に影響しない
-- [ ] エラーがVercel Analyticsで追跡される
+- [x] 全API ルートで適切なHTTPステータスコードが返る
+- [x] 各エラーに日本語メッセージが設定されている
+- [x] 外部API障害時にアプリが落ちない
+- [x] バッチ処理で個別エラーが他の処理に影響しない
+- [x] エラーがVercel Analyticsで追跡される
 
 ## 依存関係
 
@@ -60,6 +60,6 @@ Phase 2 で Qiita / Zenn / Gemini AI / バッチ処理 / Google Sheets エクス
 
 ## 関連ファイル
 
-- `src/lib/error-handler.ts`（更新）
-- `src/lib/tracking.ts`（更新）
-- 各APIルートファイル（更新）
+- `src/lib/error-handler.ts`（更新 — 9種別追加 + hint フィールド + 分類ロジック拡張）
+- `src/lib/tracking.ts`（更新 — Phase 2 トラッキングイベント追加）
+- 各APIルートファイル（既にインラインで適切なエラーハンドリング実装済み）
