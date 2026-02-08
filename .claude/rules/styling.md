@@ -21,6 +21,7 @@ paths:
 | Accent | Blue (#00D4FF) | `--color-accent` |
 | Qiita | Green (#55C500) | `--color-qiita` |
 | Zenn | Blue (#3EA8FF) | `--color-zenn` |
+| note | Teal (#41C9B4) | `--color-note` |
 | Charts/Success | Green #10b981 (emerald-500) | — |
 | Instagram | Pink (#E4405F) | — |
 | X (Twitter) | Light blue (#1DA1F2) | — |

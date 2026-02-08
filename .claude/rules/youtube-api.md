@@ -3,6 +3,7 @@ paths:
   - "src/lib/youtube.ts"
   - "src/lib/qiita.ts"
   - "src/lib/zenn.ts"
+  - "src/lib/note.ts"
   - "src/lib/gemini.ts"
   - "src/lib/monitor.ts"
   - "src/lib/analysis.ts"
@@ -56,6 +57,33 @@ paths:
 - Raw API response mapping: `path` → full URL, `id` (number) → string
 - API仕様変更時のフォールバック: JSON parse error → 502, empty articles → `[]`
 
+## note.com API Client (`lib/note.ts`)
+
+- Singleton pattern — `noteClient` export
+- No authentication required (非公式API)
+- **スロットリング**: 1500msリクエスト間隔（サーバー負荷軽減）
+- `getUserInfo(urlname)` → `NoteUser` (プロフィール → 記事一覧フォールバック、大文字小文字リトライ)
+- `getUserWithArticles(urlname, limit)` → `{ user, articles }` (ユーザー存在確認 → 記事取得)
+- `getUserArticles(urlname, limit)` → `NoteArticle[]`
+- `searchArticles(keyword, limit)` → `NoteArticle[]` (v3 search API)
+- `searchCreators(query, limit)` → `NoteUser[]` (記事検索結果からユニーククリエイター抽出)
+- `enrichArticle()` — adds `days_from_published`, `growth_rate` (likes/day)
+
+**APIエンドポイント**:
+- ユーザー記事: `GET /v2/creators/{urlname}/contents?kind=note&page={page}` (camelCase)
+- キーワード検索: `GET /v3/searches?context=note&q={keyword}&size={size}&start=0` (snake_case混在)
+- プロフィール: `GET /v2/creators/{urlname}` (camelCase)
+
+**フィールド名の注意** (v2: camelCase / v3: snake_case混在):
+- `publishAt` / `publish_at`, `likeCount` / `like_count`, `commentCount` / `comment_count`
+- `isLastPage` / `totalCount`, `userProfileImagePath` / `user_profile_image_path`
+- `enrichArticle()` は両方のフィールド名にフォールバック対応
+
+**制約**:
+- 1ページ約6件固定（`per_page` パラメータ非対応）
+- 表示用: 20件（APIルート側制限）、分析用: 最大50件
+- キャッシュTTL: 60分（他プラットフォームの30分より長め）
+
 ## Gemini AI Client (`lib/gemini.ts`)
 
 - Singleton pattern — `GeminiClient` class
@@ -70,7 +98,7 @@ paths:
 - `validatePlatformType(platform, type)` — platform + type 組合せバリデーション
 - `validateFetchCount(count)` — 50 / 100 / 200 のみ許可
 - `fetchInitialData(setting, userId)` — 初回データ取得 + collected_data upsert
-- `transformYouTubeData()` / `transformQiitaData()` / `transformZennData()` — プラットフォーム横断変換
+- `transformYouTubeData()` / `transformQiitaData()` / `transformZennData()` / `transformNoteData()` — プラットフォーム横断変換
 - `recordFetchLog()` — fetch_logs にログ記録
 
 ## Analysis Business Logic (`lib/analysis.ts`)

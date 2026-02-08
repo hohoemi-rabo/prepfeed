@@ -10,6 +10,7 @@ paths:
   - "src/lib/fetch-log.ts"
   - "src/lib/qiita.ts"
   - "src/lib/zenn.ts"
+  - "src/lib/note.ts"
 ---
 
 # API Routes 開発ルール
@@ -37,6 +38,18 @@ paths:
 |-------|---------|-----------|
 | `/api/zenn/user/[username]` | User profile + articles | 30 min |
 | `/api/zenn/keyword` | Topic search (`?q=`) | 30 min |
+
+### note API Routes (非公式API)
+
+| Route | Purpose | Cache TTL | 備考 |
+|-------|---------|-----------|------|
+| `/api/note/user/[urlname]` | Creator profile + articles | 60 min | 表示20件、404時にクリエイター候補を返す |
+| `/api/note/keyword` | Keyword search (`?q=`) | 60 min | 表示20件 |
+
+- 1500msスロットリング（リクエスト間最低1.5秒）
+- APIレスポンスはcamelCase/snake_caseが混在（v2: camelCase, v3: snake_case）
+- 1ページ約6件固定（per_pageパラメータ非対応）
+- 分析用は最大50件、表示用は20件（APIルート側で制限）
 
 ### 監視設定 API Routes (認証必須)
 

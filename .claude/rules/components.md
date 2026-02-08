@@ -16,7 +16,7 @@ paths:
 
 ### 公開ページ（検索）
 ```
-User → SearchBar → API Routes → API Client (YouTube/Qiita/Zenn) → Cache Layer → External API
+User → SearchBar → API Routes → API Client (YouTube/Qiita/Zenn/note) → Cache Layer → External API
                                       ↓
                             Analytics Processing
                                       ↓
@@ -51,7 +51,7 @@ DetailedReport ← GET /api/analysis/[id] ← analysis_results (detailed)
 **Footer** (`components/Footer.tsx`)
 - Server component (static render)
 - SNS icons with hover effects (brand colors)
-- 3プラットフォーム対応の注意事項テキスト
+- 4プラットフォーム対応の注意事項テキスト（YouTube, Qiita, Zenn, note）
 - Links to disclaimer, privacy policy
 
 **UserMenu** (`components/UserMenu.tsx`)
@@ -73,6 +73,17 @@ DetailedReport ← GET /api/analysis/[id] ← analysis_results (detailed)
 - Badges: "新着" (New), "急上昇" (Trending)
 - **Tags display**: Shows up to 8 tags, clickable to search by tag
 - Uses `formatJapaneseNumber()` for all numbers
+
+**NoteUserCard** (`components/NoteUserCard.tsx`)
+- note.com クリエイター情報カード（アバター、名前、@urlname、記事数、フォロワー数）
+- ブランドカラー: Teal (#41C9B4)
+- `follower_count` はオプショナル（null時は非表示）
+- ZennUserCard パターン準拠
+
+**ArticleCard** (`components/ArticleCard.tsx`)
+- 4プラットフォーム対応 (YouTube/Qiita/Zenn/note)
+- `platformConfig` でカラー・ラベル分岐
+- note: `StickyNote` アイコン、#41C9B4 カラー、スキ数表示
 
 **VideoChart** (`components/VideoChart.tsx`)
 - **Dynamically imported** with `next/dynamic` (heavy Recharts dependency)
@@ -120,7 +131,7 @@ DetailedReport ← GET /api/analysis/[id] ← analysis_results (detailed)
 - `usePathname()` でアクティブ判定（`/dashboard/analysis/*` は分析タブに属する）
 
 **MonitorWizard** — 5ステップ監視設定ウィザード
-- Step 1: プラットフォーム選択 (YouTube/Qiita/Zenn)
+- Step 1: プラットフォーム選択 (YouTube/Qiita/Zenn/note)
 - Step 2: 監視タイプ選択 (keyword/channel/user)
 - Step 3: 値入力（YouTube channel は検索オートコンプリート付き、300msデバウンス）
 - Step 4: 取得件数選択 (50/100/200)
@@ -154,7 +165,7 @@ DetailedReport ← GET /api/analysis/[id] ← analysis_results (detailed)
 - Full: 展開可能エラーメッセージ、プラットフォームラベル、ステータスバッジ、絶対+相対日時
 
 **FetchLogFilters** — ログフィルタ
-- Platform: 全て / YouTube / Qiita / Zenn
+- Platform: 全て / YouTube / Qiita / Zenn / note
 - Status: 全て / 成功 / エラー
 - ピルスタイルトグルボタン
 

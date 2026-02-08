@@ -33,8 +33,14 @@ paths:
 - `ZennUserResponse` - User API response (user + articles)
 - `ZennKeywordResponse` - Keyword search response (articles, query, count)
 
+### note (`types/note.ts`)
+- `NoteUser` - User profile (urlname, name, profile_image_path, note_count, follower_count?)
+- `NoteArticle` - Article with analytics (like_count, comment_count, days_from_published, growth_rate, author_urlname, author_name)
+- `NoteUserResponse` - User API response (user + articles + suggestions?)
+- `NoteKeywordResponse` - Keyword search response (articles, query, count)
+
 ### Common (`types/common.ts`)
-- `Platform` - `'youtube' | 'qiita' | 'zenn'`
+- `Platform` - `'youtube' | 'qiita' | 'zenn' | 'note'`
 - `MonitorType` - `'keyword' | 'channel' | 'user'`
 - `FetchCount` - `50 | 100 | 200`
 - `AnalysisType` - `'simple' | 'detailed'`
@@ -61,7 +67,7 @@ paths:
 ## Number & Date Formatting (`format-utils.ts`)
 
 **Critical**: Always use these for consistency
-- `formatJapaneseNumber(num)` - 1,570,000 → "157万"
+- `formatJapaneseNumber(num)` - 1,570,000 → "157万" (**注意**: `null`/`undefined`/`NaN` ガード付き → `'0'` を返す)
 - `formatJapaneseSubscribers(num)` - adds "人" suffix
 - `formatJapaneseViews(num)` - adds "回" suffix
 - `formatRelativeTime(dateStr)` - ISO日時 → "5分前", "3時間前", "2日前"
