@@ -4,6 +4,7 @@
  */
 
 import { QiitaUser, QiitaArticle } from '@/types/qiita';
+import { calculateArticleMetrics } from '@/lib/article-metrics';
 
 const QIITA_API_BASE = 'https://qiita.com/api/v2';
 
@@ -154,13 +155,10 @@ class QiitaAPIClient {
    */
   private enrichArticle(raw: QiitaRawItem): QiitaArticle {
     const publishedAt = raw.created_at;
-    const daysFromPublished = Math.floor(
-      (Date.now() - new Date(publishedAt).getTime()) / (1000 * 60 * 60 * 24)
+    const { daysFromPublished, growthRate } = calculateArticleMetrics(
+      raw.likes_count,
+      publishedAt
     );
-    const growthRate =
-      daysFromPublished > 0
-        ? Number((raw.likes_count / daysFromPublished).toFixed(2))
-        : raw.likes_count;
 
     return {
       id: raw.id,

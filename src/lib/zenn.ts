@@ -6,6 +6,7 @@
  */
 
 import { ZennUser, ZennArticle } from '@/types/zenn';
+import { calculateArticleMetrics } from '@/lib/article-metrics';
 
 const ZENN_API_BASE = 'https://zenn.dev/api';
 
@@ -167,13 +168,10 @@ class ZennAPIClient {
    */
   private enrichArticle(raw: ZennRawArticle): ZennArticle {
     const publishedAt = raw.published_at;
-    const daysFromPublished = Math.floor(
-      (Date.now() - new Date(publishedAt).getTime()) / (1000 * 60 * 60 * 24)
+    const { daysFromPublished, growthRate } = calculateArticleMetrics(
+      raw.liked_count,
+      publishedAt
     );
-    const growthRate =
-      daysFromPublished > 0
-        ? Number((raw.liked_count / daysFromPublished).toFixed(2))
-        : raw.liked_count;
 
     return {
       id: String(raw.id),

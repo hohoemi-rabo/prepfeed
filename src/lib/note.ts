@@ -9,6 +9,7 @@
  */
 
 import { NoteUser, NoteArticle } from '@/types/note';
+import { calculateArticleMetrics } from '@/lib/article-metrics';
 
 const NOTE_API_BASE = 'https://note.com/api';
 const MIN_REQUEST_INTERVAL_MS = 1500;
@@ -352,15 +353,10 @@ class NoteAPIClient {
     const publishedAt = raw.publishAt || raw.publish_at || '';
     const likeCount = raw.likeCount ?? raw.like_count ?? 0;
     const commentCount = raw.commentCount ?? raw.comment_count ?? 0;
-    const daysFromPublished = publishedAt
-      ? Math.floor(
-          (Date.now() - new Date(publishedAt).getTime()) / (1000 * 60 * 60 * 24)
-        )
-      : 0;
-    const growthRate =
-      daysFromPublished > 0
-        ? Number((likeCount / daysFromPublished).toFixed(2))
-        : likeCount;
+    const { daysFromPublished, growthRate } = calculateArticleMetrics(
+      likeCount,
+      publishedAt
+    );
 
     const authorName = raw.user.nickname || raw.user.name || raw.user.urlname;
 

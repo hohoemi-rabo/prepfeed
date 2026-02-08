@@ -8,7 +8,8 @@ import youtubeClient from '@/lib/youtube';
 import { qiitaClient } from '@/lib/qiita';
 import { zennClient } from '@/lib/zenn';
 import { noteClient } from '@/lib/note';
-import type { Platform, MonitorType, FetchCount, FetchLogStatus } from '@/types/common';
+import type { Platform, MonitorType, FetchCount } from '@/types/common';
+import { createFetchLog } from '@/lib/fetch-log';
 import type { MonitorSetting } from '@/types/monitor';
 import type { YouTubeVideo } from '@/types';
 import type { QiitaArticle } from '@/types/qiita';
@@ -185,49 +186,23 @@ export async function fetchInitialData(
     );
 
     if (data.length === 0) {
-      await recordFetchLog(
-        supabase,
-        userId,
-        setting.id,
-        setting.platform,
-        'success',
-        0
-      );
+      await createFetchLog(supabase, {
+        user_id: userId,
+        setting_id: setting.id,
+        platform: setting.platform,
+        status: 'success',
+        records_count: 0,
+      });
       return { count: 0 };
     }
 
     // CollectedData 形式に変換
-    let collectedData: CollectedDataInsert[];
-    switch (setting.platform) {
-      case 'youtube':
-        collectedData = transformYouTubeData(
-          data as YouTubeVideo[],
-          userId,
-          setting.id
-        );
-        break;
-      case 'qiita':
-        collectedData = transformQiitaData(
-          data as QiitaArticle[],
-          userId,
-          setting.id
-        );
-        break;
-      case 'zenn':
-        collectedData = transformZennData(
-          data as ZennArticle[],
-          userId,
-          setting.id
-        );
-        break;
-      case 'note':
-        collectedData = transformNoteData(
-          data as NoteArticle[],
-          userId,
-          setting.id
-        );
-        break;
-    }
+    const collectedData = transformPlatformData(
+      setting.platform,
+      data,
+      userId,
+      setting.id
+    );
 
     // collected_data に upsert
     const { error: upsertError } = await supabase
@@ -247,14 +222,13 @@ export async function fetchInitialData(
       .eq('id', setting.id);
 
     // fetch_logs に成功を記録
-    await recordFetchLog(
-      supabase,
-      userId,
-      setting.id,
-      setting.platform,
-      'success',
-      collectedData.length
-    );
+    await createFetchLog(supabase, {
+      user_id: userId,
+      setting_id: setting.id,
+      platform: setting.platform,
+      status: 'success',
+      records_count: collectedData.length,
+    });
 
     return { count: collectedData.length };
   } catch (error) {
@@ -263,15 +237,13 @@ export async function fetchInitialData(
     console.error('[Monitor] fetchInitialData error:', errorMessage);
 
     // fetch_logs にエラーを記録
-    await recordFetchLog(
-      supabase,
-      userId,
-      setting.id,
-      setting.platform,
-      'error',
-      undefined,
-      errorMessage
-    );
+    await createFetchLog(supabase, {
+      user_id: userId,
+      setting_id: setting.id,
+      platform: setting.platform,
+      status: 'error',
+      error_message: errorMessage,
+    });
 
     return { count: 0, error: errorMessage };
   }
@@ -316,27 +288,26 @@ export async function fetchPlatformData(
   }
 }
 
-// ─── Fetch Log ───
+// ─── Transform ディスパッチャー ───
 
-export async function recordFetchLog(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  userId: string,
-  settingId: string,
+/**
+ * プラットフォーム別データを CollectedData 形式に変換
+ */
+export function transformPlatformData(
   platform: Platform,
-  status: FetchLogStatus,
-  recordsCount?: number,
-  errorMessage?: string
-): Promise<void> {
-  const { error } = await supabase.from('fetch_logs').insert({
-    user_id: userId,
-    setting_id: settingId,
-    platform,
-    status,
-    records_count: recordsCount,
-    error_message: errorMessage,
-  });
-
-  if (error) {
-    console.error('[Monitor] Failed to record fetch log:', error.message);
+  data: unknown[],
+  userId: string,
+  settingId: string
+): CollectedDataInsert[] {
+  switch (platform) {
+    case 'youtube':
+      return transformYouTubeData(data as YouTubeVideo[], userId, settingId);
+    case 'qiita':
+      return transformQiitaData(data as QiitaArticle[], userId, settingId);
+    case 'zenn':
+      return transformZennData(data as ZennArticle[], userId, settingId);
+    case 'note':
+      return transformNoteData(data as NoteArticle[], userId, settingId);
   }
 }
+

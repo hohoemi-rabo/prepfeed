@@ -7,24 +7,16 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { createAdminClient } from '@/lib/supabase/admin';
 import {
   fetchPlatformData,
-  transformYouTubeData,
-  transformQiitaData,
-  transformZennData,
-  transformNoteData,
+  transformPlatformData,
 } from '@/lib/monitor';
 import {
   upsertCollectedData,
   updateLastFetchedAt,
-  recordBatchFetchLog,
 } from '@/lib/data-collector';
+import { createFetchLog } from '@/lib/fetch-log';
 import { runSimpleAnalysis } from '@/lib/analysis';
 import type { MonitorSetting } from '@/types/monitor';
 import type { CollectedData } from '@/types/collected-data';
-import type { CollectedDataInsert } from '@/lib/monitor';
-import type { YouTubeVideo } from '@/types';
-import type { QiitaArticle } from '@/types/qiita';
-import type { ZennArticle } from '@/types/zenn';
-import type { NoteArticle } from '@/types/note';
 
 const DELAY_BETWEEN_SETTINGS_MS = 1000;
 const TIME_BUDGET_MARGIN_MS = 10_000;
@@ -197,49 +189,23 @@ async function processSetting(
   );
 
   if (rawData.length === 0) {
-    await recordBatchFetchLog(
-      supabase,
-      userId,
-      setting.id,
-      setting.platform,
-      'success',
-      0
-    );
+    await createFetchLog(supabase, {
+      user_id: userId,
+      setting_id: setting.id,
+      platform: setting.platform,
+      status: 'success',
+      records_count: 0,
+    });
     return;
   }
 
   // 2. CollectedData 形式に変換
-  let collectedData: CollectedDataInsert[];
-  switch (setting.platform) {
-    case 'youtube':
-      collectedData = transformYouTubeData(
-        rawData as YouTubeVideo[],
-        userId,
-        setting.id
-      );
-      break;
-    case 'qiita':
-      collectedData = transformQiitaData(
-        rawData as QiitaArticle[],
-        userId,
-        setting.id
-      );
-      break;
-    case 'zenn':
-      collectedData = transformZennData(
-        rawData as ZennArticle[],
-        userId,
-        setting.id
-      );
-      break;
-    case 'note':
-      collectedData = transformNoteData(
-        rawData as NoteArticle[],
-        userId,
-        setting.id
-      );
-      break;
-  }
+  const collectedData = transformPlatformData(
+    setting.platform,
+    rawData,
+    userId,
+    setting.id
+  );
 
   // 3. collected_data に Upsert
   await upsertCollectedData(supabase, collectedData);
@@ -248,14 +214,13 @@ async function processSetting(
   await updateLastFetchedAt(supabase, setting.id);
 
   // 5. fetch_logs に記録
-  await recordBatchFetchLog(
-    supabase,
-    userId,
-    setting.id,
-    setting.platform,
-    'success',
-    collectedData.length
-  );
+  await createFetchLog(supabase, {
+    user_id: userId,
+    setting_id: setting.id,
+    platform: setting.platform,
+    status: 'success',
+    records_count: collectedData.length,
+  });
 
   // 6. 簡易分析を実行
   try {
