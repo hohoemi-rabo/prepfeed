@@ -1,52 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import youtubeClient from '@/lib/youtube';
 import { ChannelSearchResponse } from '@/types';
-import { apiRateLimiter, getClientIp } from '@/lib/rate-limiter';
 import { getCachedData, generateCacheKey } from '@/lib/cache';
+import { checkRateLimit, validateSearchQuery, optionsResponse } from '@/lib/api-helpers';
 
 export async function GET(request: NextRequest) {
   try {
-    // レート制限のチェック
-    const clientIp = getClientIp(request);
-    if (!apiRateLimiter.checkLimit(clientIp)) {
-      const resetTime = apiRateLimiter.getResetTime(clientIp);
-      return NextResponse.json(
-        {
-          error: `リクエスト制限に達しました。${resetTime}秒後に再度お試しください。`,
-          retryAfter: resetTime
-        },
-        {
-          status: 429,
-          headers: {
-            'Retry-After': resetTime.toString(),
-            'X-RateLimit-Limit': '10',
-            'X-RateLimit-Remaining': apiRateLimiter.getRemainingRequests(clientIp).toString(),
-            'X-RateLimit-Reset': new Date(Date.now() + resetTime * 1000).toISOString(),
-          }
-        }
-      );
-    }
-    const searchParams = request.nextUrl.searchParams;
-    const query = searchParams.get('q');
+    const rateLimited = checkRateLimit(request);
+    if (rateLimited) return rateLimited;
 
-    // クエリパラメータのバリデーション
-    if (!query || query.trim().length === 0) {
-      return NextResponse.json(
-        { error: '検索クエリが必要です' },
-        { status: 400 }
-      );
-    }
-
-    // 検索クエリの長さ制限
-    if (query.length > 100) {
-      return NextResponse.json(
-        { error: '検索クエリが長すぎます' },
-        { status: 400 }
-      );
-    }
+    const validated = validateSearchQuery(request);
+    if ('response' in validated) return validated.response;
+    const { query } = validated;
 
     // キャッシュキーを生成
-    const cacheKey = generateCacheKey('search', query.toLowerCase().trim());
+    const cacheKey = generateCacheKey('search', query.toLowerCase());
 
     // キャッシュ付きでYouTube APIを呼び出し
     const channels = await getCachedData(
@@ -93,13 +61,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// OPTIONSメソッドのサポート（CORS対応）
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
+  return optionsResponse();
 }

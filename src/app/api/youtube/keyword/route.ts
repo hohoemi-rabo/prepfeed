@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import youtubeClient from '@/lib/youtube';
 import { KeywordSearchResponse } from '@/types';
-import { apiRateLimiter, getClientIp } from '@/lib/rate-limiter';
 import { getCachedData, generateCacheKey } from '@/lib/cache';
+import { checkRateLimit, validateSearchQuery, optionsResponse } from '@/lib/api-helpers';
 
 /**
  * GET /api/youtube/keyword
@@ -15,48 +15,15 @@ import { getCachedData, generateCacheKey } from '@/lib/cache';
  */
 export async function GET(request: NextRequest) {
   try {
-    // レート制限のチェック
-    const clientIp = getClientIp(request);
-    if (!apiRateLimiter.checkLimit(clientIp)) {
-      const resetTime = apiRateLimiter.getResetTime(clientIp);
-      return NextResponse.json(
-        {
-          error: `リクエスト制限に達しました。${resetTime}秒後に再度お試しください。`,
-          retryAfter: resetTime
-        },
-        {
-          status: 429,
-          headers: {
-            'Retry-After': resetTime.toString(),
-            'X-RateLimit-Limit': '10',
-            'X-RateLimit-Remaining': apiRateLimiter.getRemainingRequests(clientIp).toString(),
-            'X-RateLimit-Reset': new Date(Date.now() + resetTime * 1000).toISOString(),
-          }
-        }
-      );
-    }
+    const rateLimited = checkRateLimit(request);
+    if (rateLimited) return rateLimited;
 
-    const searchParams = request.nextUrl.searchParams;
-    const query = searchParams.get('q');
-
-    // クエリパラメータのバリデーション
-    if (!query || query.trim().length === 0) {
-      return NextResponse.json(
-        { error: '検索キーワードが必要です' },
-        { status: 400 }
-      );
-    }
-
-    // 検索キーワードの長さ制限
-    if (query.length > 100) {
-      return NextResponse.json(
-        { error: '検索キーワードが長すぎます（最大100文字）' },
-        { status: 400 }
-      );
-    }
+    const validated = validateSearchQuery(request);
+    if ('response' in validated) return validated.response;
+    const { query } = validated;
 
     // キャッシュキーを生成
-    const cacheKey = generateCacheKey('keyword-search', query.toLowerCase().trim());
+    const cacheKey = generateCacheKey('keyword-search', query.toLowerCase());
 
     console.log(`Keyword search request: "${query}"`);
 
@@ -69,7 +36,7 @@ export async function GET(request: NextRequest) {
 
     const response: KeywordSearchResponse = {
       videos,
-      query: query.trim(),
+      query,
       count: videos.length,
     };
 
@@ -117,14 +84,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// OPTIONSメソッドのサポート（CORS対応）
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function OPTIONS(_request: NextRequest) {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
+export async function OPTIONS() {
+  return optionsResponse();
 }

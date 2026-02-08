@@ -4,25 +4,15 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { requireAuth } from '@/lib/api-helpers';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { processUserSettings } from '@/lib/batch-processor';
 
 export async function POST() {
   try {
-    // 通常の認証チェック（cookieベース）
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'ログインが必要です' },
-        { status: 401 }
-      );
-    }
+    const auth = await requireAuth();
+    if ('response' in auth) return auth.response;
+    const { user } = auth;
 
     // Admin Client でバッチ処理を実行（RLS バイパスが必要）
     const adminSupabase = createAdminClient();

@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { waitUntil } from '@vercel/functions';
+import { requireAuth } from '@/lib/api-helpers';
 import { createClient } from '@/lib/supabase/server';
 import {
   validatePlatformType,
@@ -18,19 +19,9 @@ import type { CollectedData } from '@/types/collected-data';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'ログインが必要です' },
-        { status: 401 }
-      );
-    }
+    const auth = await requireAuth();
+    if ('response' in auth) return auth.response;
+    const { supabase, user } = auth;
 
     // クエリパラメータ
     const { searchParams } = new URL(request.url);
@@ -70,19 +61,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'ログインが必要です' },
-        { status: 401 }
-      );
-    }
+    const auth = await requireAuth();
+    if ('response' in auth) return auth.response;
+    const { supabase, user } = auth;
 
     // TODO: プレミアムチェック（現段階では全ユーザーに開放）
     // const { data: profile } = await supabase

@@ -6,55 +6,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { zennClient } from '@/lib/zenn';
 import { generateCacheKey, getCachedData } from '@/lib/cache';
-import { apiRateLimiter, getClientIp } from '@/lib/rate-limiter';
+import { checkRateLimit, validateSearchQuery, optionsResponse } from '@/lib/api-helpers';
 import { ZennKeywordResponse } from '@/types/zenn';
 
 export async function GET(request: NextRequest) {
   try {
-    // レート制限
-    const clientIp = getClientIp(request);
-    if (!apiRateLimiter.checkLimit(clientIp)) {
-      const resetTime = apiRateLimiter.getResetTime(clientIp);
-      return NextResponse.json(
-        {
-          error:
-            'リクエストが多すぎます。しばらく待ってからお試しください。',
-          retryAfter: resetTime,
-        },
-        {
-          status: 429,
-          headers: {
-            'Retry-After': String(resetTime),
-            'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': String(resetTime),
-          },
-        }
-      );
-    }
+    const rateLimited = checkRateLimit(request);
+    if (rateLimited) return rateLimited;
 
-    // クエリパラメータ
-    const { searchParams } = new URL(request.url);
-    const query = searchParams.get('q');
-    const limit = Math.min(Number(searchParams.get('limit')) || 50, 100);
-
-    // バリデーション
-    if (!query || query.trim().length === 0) {
-      return NextResponse.json(
-        { error: '検索キーワードが必要です' },
-        { status: 400 }
-      );
-    }
-    if (query.length > 100) {
-      return NextResponse.json(
-        { error: '検索キーワードが長すぎます' },
-        { status: 400 }
-      );
-    }
+    const validated = validateSearchQuery(request);
+    if ('response' in validated) return validated.response;
+    const { query, limit } = validated;
 
     // キャッシュ（30分TTL）
     const cacheKey = generateCacheKey(
       'zenn-keyword',
-      `${query.toLowerCase().trim()}-${limit}`
+      `${query.toLowerCase()}-${limit}`
     );
 
     const articles = await getCachedData(
@@ -108,11 +75,5 @@ export async function GET(request: NextRequest) {
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
+  return optionsResponse();
 }

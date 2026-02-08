@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { zennClient } from '@/lib/zenn';
 import { generateCacheKey, getCachedData } from '@/lib/cache';
-import { apiRateLimiter, getClientIp } from '@/lib/rate-limiter';
+import { checkRateLimit, optionsResponse } from '@/lib/api-helpers';
 import { ZennUserResponse } from '@/types/zenn';
 
 export async function GET(
@@ -14,26 +14,8 @@ export async function GET(
   { params }: { params: Promise<{ username: string }> }
 ) {
   try {
-    // レート制限
-    const clientIp = getClientIp(request);
-    if (!apiRateLimiter.checkLimit(clientIp)) {
-      const resetTime = apiRateLimiter.getResetTime(clientIp);
-      return NextResponse.json(
-        {
-          error:
-            'リクエストが多すぎます。しばらく待ってからお試しください。',
-          retryAfter: resetTime,
-        },
-        {
-          status: 429,
-          headers: {
-            'Retry-After': String(resetTime),
-            'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': String(resetTime),
-          },
-        }
-      );
-    }
+    const rateLimited = checkRateLimit(request);
+    if (rateLimited) return rateLimited;
 
     const { username } = await params;
 
@@ -119,11 +101,5 @@ export async function GET(
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
+  return optionsResponse();
 }

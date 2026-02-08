@@ -4,28 +4,18 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { requireAuth } from '@/lib/api-helpers';
 import { getUserLogs } from '@/lib/fetch-log';
 import type { Platform, FetchLogStatus } from '@/types/common';
 
-const VALID_PLATFORMS: Platform[] = ['youtube', 'qiita', 'zenn'];
+const VALID_PLATFORMS: Platform[] = ['youtube', 'qiita', 'zenn', 'note'];
 const VALID_STATUSES: FetchLogStatus[] = ['success', 'error'];
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'ログインが必要です' },
-        { status: 401 }
-      );
-    }
+    const auth = await requireAuth();
+    if ('response' in auth) return auth.response;
+    const { supabase, user } = auth;
 
     const { searchParams } = new URL(request.url);
 

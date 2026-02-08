@@ -7,7 +7,7 @@
 
 import { NextResponse } from 'next/server';
 import { waitUntil } from '@vercel/functions';
-import { createClient } from '@/lib/supabase/server';
+import { requireAuth } from '@/lib/api-helpers';
 import { runDetailedAnalysis } from '@/lib/analysis';
 import {
   createAnalysisRecord,
@@ -17,20 +17,9 @@ import {
 
 export async function POST() {
   try {
-    const supabase = await createClient();
-
-    // 認証チェック
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'ログインが必要です' },
-        { status: 401 }
-      );
-    }
+    const auth = await requireAuth();
+    if ('response' in auth) return auth.response;
+    const { supabase, user } = auth;
 
     // 既に処理中の詳細分析がないかチェック
     const { active, analysisId: existingId } = await hasActiveDetailedJob(
