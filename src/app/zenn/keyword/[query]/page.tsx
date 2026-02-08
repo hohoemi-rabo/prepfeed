@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { ZennArticle } from '@/types/zenn';
 import { ArticleSortType, ArticleSortOrder } from '@/lib/article-sort-utils';
 import { PLATFORM_META } from '@/lib/platform-config';
+import { useFetch } from '@/hooks/useFetch';
 import ArticleList from '@/components/ArticleList';
 import ArticleSortTabs from '@/components/ArticleSortTabs';
 import LoadingState from '@/components/LoadingState';
@@ -19,9 +20,12 @@ export default function ZennKeywordPage() {
   const router = useRouter();
   const query = decodeURIComponent(params.query as string);
 
-  const [articles, setArticles] = useState<ZennArticle[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error } = useFetch<{ articles: ZennArticle[] }>(
+    query ? `/api/zenn/keyword?q=${encodeURIComponent(query)}` : null,
+    'Error fetching Zenn keyword results'
+  );
+  const articles = data?.articles || [];
+
   const [keywordQuery, setKeywordQuery] = useState('');
   const [sortType, setSortType] = useState<ArticleSortType>('likes');
   const [sortOrder, setSortOrder] = useState<ArticleSortOrder>('desc');
@@ -30,37 +34,6 @@ export default function ZennKeywordPage() {
     if (query) {
       document.title = `「${query}」の検索結果 | Zenn | PrepFeed`;
     }
-  }, [query]);
-
-  useEffect(() => {
-    const fetchResults = async () => {
-      if (!query) return;
-
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const response = await fetch(
-          `/api/zenn/keyword?q=${encodeURIComponent(query)}`
-        );
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'キーワード検索に失敗しました');
-        }
-
-        setArticles(data.articles || []);
-      } catch (err) {
-        console.error('Error fetching Zenn keyword results:', err);
-        const errorMessage =
-          err instanceof Error ? err.message : 'エラーが発生しました';
-        setError(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchResults();
   }, [query]);
 
   const handleKeywordSearch = (e: React.FormEvent) => {

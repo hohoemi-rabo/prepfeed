@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { ZennUser, ZennArticle } from '@/types/zenn';
 import { ArticleSortType, ArticleSortOrder } from '@/lib/article-sort-utils';
 import { PLATFORM_META } from '@/lib/platform-config';
+import { useFetch } from '@/hooks/useFetch';
 import PlatformUserCard from '@/components/PlatformUserCard';
 import ArticleList from '@/components/ArticleList';
 import ArticleSortTabs from '@/components/ArticleSortTabs';
@@ -20,54 +21,23 @@ export default function ZennUserPage() {
   const params = useParams();
   const username = params.username as string;
 
-  const [user, setUser] = useState<ZennUser | null>(null);
-  const [articles, setArticles] = useState<ZennArticle[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error } = useFetch<{ user: ZennUser; articles: ZennArticle[] }>(
+    username ? `/api/zenn/user/${encodeURIComponent(username)}` : null,
+    'Error fetching Zenn user data'
+  );
+  const user = data?.user || null;
+  const articles = data?.articles || [];
+
   const [sortType, setSortType] = useState<ArticleSortType>('date');
   const [sortOrder, setSortOrder] = useState<ArticleSortOrder>('desc');
 
   useEffect(() => {
-    if (username) {
+    if (user) {
+      document.title = `${user.name} (@${user.username}) の記事一覧 | PrepFeed`;
+    } else if (username) {
       document.title = `${username} の記事一覧 | PrepFeed`;
     }
-  }, [username]);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (!username) return;
-
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const response = await fetch(
-          `/api/zenn/user/${encodeURIComponent(username)}`
-        );
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'ユーザー情報の取得に失敗しました');
-        }
-
-        setUser(data.user);
-        setArticles(data.articles || []);
-
-        if (data.user) {
-          document.title = `${data.user.name} (@${data.user.username}) の記事一覧 | PrepFeed`;
-        }
-      } catch (err) {
-        console.error('Error fetching Zenn user data:', err);
-        const errorMessage =
-          err instanceof Error ? err.message : 'エラーが発生しました';
-        setError(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, [username]);
+  }, [username, user]);
 
   if (isLoading) {
     return <LoadingState message="ユーザー情報を取得中..." color={color} />;

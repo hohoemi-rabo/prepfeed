@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { QiitaUser, QiitaArticle } from '@/types/qiita';
 import { ArticleSortType, ArticleSortOrder } from '@/lib/article-sort-utils';
 import { PLATFORM_META } from '@/lib/platform-config';
+import { useFetch } from '@/hooks/useFetch';
 import PlatformUserCard from '@/components/PlatformUserCard';
 import ArticleList from '@/components/ArticleList';
 import ArticleSortTabs from '@/components/ArticleSortTabs';
@@ -20,52 +21,23 @@ export default function QiitaUserPage() {
   const params = useParams();
   const userId = params.id as string;
 
-  const [user, setUser] = useState<QiitaUser | null>(null);
-  const [articles, setArticles] = useState<QiitaArticle[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error } = useFetch<{ user: QiitaUser; articles: QiitaArticle[] }>(
+    userId ? `/api/qiita/user/${encodeURIComponent(userId)}` : null,
+    'Error fetching Qiita user data'
+  );
+  const user = data?.user || null;
+  const articles = data?.articles || [];
+
   const [sortType, setSortType] = useState<ArticleSortType>('date');
   const [sortOrder, setSortOrder] = useState<ArticleSortOrder>('desc');
 
   useEffect(() => {
-    if (userId) {
+    if (user) {
+      document.title = `${user.name} (@${user.id}) の記事一覧 | PrepFeed`;
+    } else if (userId) {
       document.title = `${userId} の記事一覧 | PrepFeed`;
     }
-  }, [userId]);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (!userId) return;
-
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const response = await fetch(`/api/qiita/user/${encodeURIComponent(userId)}`);
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'ユーザー情報の取得に失敗しました');
-        }
-
-        setUser(data.user);
-        setArticles(data.articles || []);
-
-        if (data.user) {
-          document.title = `${data.user.name} (@${data.user.id}) の記事一覧 | PrepFeed`;
-        }
-      } catch (err) {
-        console.error('Error fetching Qiita user data:', err);
-        const errorMessage =
-          err instanceof Error ? err.message : 'エラーが発生しました';
-        setError(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, [userId]);
+  }, [userId, user]);
 
   if (isLoading) {
     return <LoadingState message="ユーザー情報を取得中..." color={color} />;
