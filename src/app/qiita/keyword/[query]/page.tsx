@@ -6,8 +6,13 @@ import { ArrowLeft, Search, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { QiitaArticle } from '@/types/qiita';
 import { ArticleSortType, ArticleSortOrder } from '@/lib/article-sort-utils';
+import { PLATFORM_META } from '@/lib/platform-config';
 import ArticleList from '@/components/ArticleList';
 import ArticleSortTabs from '@/components/ArticleSortTabs';
+import LoadingState from '@/components/LoadingState';
+import ErrorState from '@/components/ErrorState';
+
+const { color, colorDark } = PLATFORM_META.qiita;
 
 export default function QiitaKeywordPage() {
   const params = useParams();
@@ -69,40 +74,15 @@ export default function QiitaKeywordPage() {
 
   if (isLoading) {
     return (
-      <div className="container-custom py-8">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#55C500]"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">
-            「{query}」を検索中...
-          </p>
-        </div>
-      </div>
+      <LoadingState
+        message={`「${query}」を検索中...`}
+        color={color}
+      />
     );
   }
 
   if (error) {
-    return (
-      <div className="container-custom py-8">
-        <div className="card text-center">
-          <div className="text-red-500 mb-4">
-            <Search className="w-16 h-16 mx-auto mb-4" />
-          </div>
-          <h2 className="text-xl font-bold mb-2">エラーが発生しました</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
-          <div className="space-x-4">
-            <button
-              onClick={() => window.location.reload()}
-              className="btn-primary"
-            >
-              再試行
-            </button>
-            <Link href="/" className="btn-secondary">
-              ホームに戻る
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
+    return <ErrorState error={error} />;
   }
 
   if (articles.length === 0) {
@@ -155,7 +135,8 @@ export default function QiitaKeywordPage() {
             </div>
             <button
               type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 bg-gradient-to-r from-[#55C500] to-[#449E00] text-white rounded-md text-sm font-medium hover:opacity-90 transition-opacity"
+              className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 text-white rounded-md text-sm font-medium hover:opacity-90 transition-opacity"
+              style={{ background: `linear-gradient(to right, ${color}, ${colorDark})` }}
             >
               検索
             </button>
@@ -168,7 +149,10 @@ export default function QiitaKeywordPage() {
         <div className="card">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
-              <div className="w-12 h-12 bg-gradient-to-r from-[#55C500] to-[#449E00] rounded-lg flex items-center justify-center">
+              <div
+                className="w-12 h-12 rounded-lg flex items-center justify-center"
+                style={{ background: `linear-gradient(to right, ${color}, ${colorDark})` }}
+              >
                 <Search className="w-6 h-6 text-white" />
               </div>
             </div>

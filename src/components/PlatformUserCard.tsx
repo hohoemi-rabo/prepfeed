@@ -1,21 +1,42 @@
 'use client';
 
+/**
+ * プラットフォーム共通ユーザーカード
+ * Qiita / Zenn / note のユーザー情報表示を統合
+ */
+
 import Image from 'next/image';
-import { ExternalLink, FileText, Users } from 'lucide-react';
-import { NoteUser } from '@/types/note';
+import { ExternalLink, Users } from 'lucide-react';
+import { PLATFORM_META } from '@/lib/platform-config';
+import type { Platform } from '@/types/common';
 import { formatJapaneseNumber } from '@/lib/format-utils';
 
-interface NoteUserCardProps {
-  user: NoteUser;
+export interface UserStat {
+  label: string;
+  value: number;
 }
 
-export default function NoteUserCard({ user }: NoteUserCardProps) {
-  const handleOpenNote = () => {
-    window.open(
-      `https://note.com/${user.urlname}`,
-      '_blank',
-      'noopener,noreferrer'
-    );
+interface PlatformUserCardProps {
+  platform: Platform;
+  name: string;
+  handle: string;
+  avatarUrl?: string;
+  stats: UserStat[];
+  profileUrl: string;
+}
+
+export default function PlatformUserCard({
+  platform,
+  name,
+  handle,
+  avatarUrl,
+  stats,
+  profileUrl,
+}: PlatformUserCardProps) {
+  const { color, linkLabel } = PLATFORM_META[platform];
+
+  const handleOpenProfile = () => {
+    window.open(profileUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -24,10 +45,10 @@ export default function NoteUserCard({ user }: NoteUserCardProps) {
         {/* アバター */}
         <div className="flex-shrink-0">
           <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
-            {user.profile_image_path ? (
+            {avatarUrl ? (
               <Image
-                src={user.profile_image_path}
-                alt={user.name}
+                src={avatarUrl}
+                alt={name}
                 width={80}
                 height={80}
                 className="object-cover w-full h-full"
@@ -43,39 +64,32 @@ export default function NoteUserCard({ user }: NoteUserCardProps) {
         {/* ユーザー情報 */}
         <div className="flex-1 text-center sm:text-left">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2 mb-2">
-            <h2 className="text-2xl font-bold">{user.name}</h2>
+            <h2 className="text-2xl font-bold">{name}</h2>
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              @{user.urlname}
+              @{handle}
             </span>
           </div>
 
           {/* 統計 */}
           <div className="flex items-center justify-center sm:justify-start gap-6 mb-4">
-            <div className="flex items-center gap-2 text-sm">
-              <FileText className="w-4 h-4 text-[#41C9B4]" />
-              <span className="font-medium">
-                {formatJapaneseNumber(user.note_count)}
-              </span>
-              <span className="text-gray-500">記事</span>
-            </div>
-            {user.follower_count != null && (
-              <div className="flex items-center gap-2 text-sm">
-                <Users className="w-4 h-4 text-[#41C9B4]" />
-                <span className="font-medium">
-                  {formatJapaneseNumber(user.follower_count ?? 0)}
+            {stats.map((stat) => (
+              <div key={stat.label} className="flex items-center gap-2 text-sm">
+                <span className="font-medium" style={{ color }}>
+                  {formatJapaneseNumber(stat.value)}
                 </span>
-                <span className="text-gray-500">フォロワー</span>
+                <span className="text-gray-500">{stat.label}</span>
               </div>
-            )}
+            ))}
           </div>
 
           {/* 外部リンク */}
           <button
-            onClick={handleOpenNote}
-            className="inline-flex items-center gap-1 text-sm text-[#41C9B4] hover:underline transition-colors"
+            onClick={handleOpenProfile}
+            className="inline-flex items-center gap-1 text-sm hover:underline transition-colors"
+            style={{ color }}
           >
             <ExternalLink className="w-4 h-4" />
-            noteで見る
+            {linkLabel}
           </button>
         </div>
       </div>

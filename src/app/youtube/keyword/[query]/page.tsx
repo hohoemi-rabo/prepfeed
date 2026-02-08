@@ -5,9 +5,14 @@ import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Search, VideoIcon } from 'lucide-react';
 import Link from 'next/link';
 import { YouTubeVideo } from '@/types';
+import { PLATFORM_META } from '@/lib/platform-config';
 import VideoList from '@/components/VideoList';
 import SortTabs from '@/components/SortTabs';
+import LoadingState from '@/components/LoadingState';
+import ErrorState from '@/components/ErrorState';
 import { trackError } from '@/lib/tracking';
+
+const { color } = PLATFORM_META.youtube;
 
 export default function KeywordSearchPage() {
   const params = useParams();
@@ -67,40 +72,15 @@ export default function KeywordSearchPage() {
 
   if (isLoading) {
     return (
-      <div className="container-custom py-8">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF0000]"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">
-            「{query}」を検索中...
-          </p>
-        </div>
-      </div>
+      <LoadingState
+        message={`「${query}」を検索中...`}
+        color={color}
+      />
     );
   }
 
   if (error) {
-    return (
-      <div className="container-custom py-8">
-        <div className="card text-center">
-          <div className="text-red-500 mb-4">
-            <Search className="w-16 h-16 mx-auto mb-4" />
-          </div>
-          <h2 className="text-xl font-bold mb-2">エラーが発生しました</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
-          <div className="space-x-4">
-            <button
-              onClick={() => window.location.reload()}
-              className="btn-primary"
-            >
-              再試行
-            </button>
-            <Link href="/" className="btn-secondary">
-              ホームに戻る
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
+    return <ErrorState error={error} />;
   }
 
   if (videos.length === 0) {

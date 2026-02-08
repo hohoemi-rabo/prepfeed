@@ -2,14 +2,19 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { ArrowLeft, Search, FileText, Users } from 'lucide-react';
+import { ArrowLeft, FileText, Users } from 'lucide-react';
 import Link from 'next/link';
 import { QiitaUser, QiitaArticle } from '@/types/qiita';
 import { ArticleSortType, ArticleSortOrder } from '@/lib/article-sort-utils';
-import QiitaUserCard from '@/components/QiitaUserCard';
+import { PLATFORM_META } from '@/lib/platform-config';
+import PlatformUserCard from '@/components/PlatformUserCard';
 import ArticleList from '@/components/ArticleList';
 import ArticleSortTabs from '@/components/ArticleSortTabs';
+import LoadingState from '@/components/LoadingState';
+import ErrorState from '@/components/ErrorState';
 import { formatJapaneseNumber } from '@/lib/format-utils';
+
+const { color } = PLATFORM_META.qiita;
 
 export default function QiitaUserPage() {
   const params = useParams();
@@ -63,41 +68,11 @@ export default function QiitaUserPage() {
   }, [userId]);
 
   if (isLoading) {
-    return (
-      <div className="container-custom py-8">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#55C500]"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">
-            ユーザー情報を取得中...
-          </p>
-        </div>
-      </div>
-    );
+    return <LoadingState message="ユーザー情報を取得中..." color={color} />;
   }
 
   if (error) {
-    return (
-      <div className="container-custom py-8">
-        <div className="card text-center">
-          <div className="text-red-500 mb-4">
-            <Search className="w-16 h-16 mx-auto mb-4" />
-          </div>
-          <h2 className="text-xl font-bold mb-2">エラーが発生しました</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
-          <div className="space-x-4">
-            <button
-              onClick={() => window.location.reload()}
-              className="btn-primary"
-            >
-              再試行
-            </button>
-            <Link href="/" className="btn-secondary">
-              ホームに戻る
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
+    return <ErrorState error={error} />;
   }
 
   if (!user) {
@@ -132,7 +107,17 @@ export default function QiitaUserPage() {
 
       {/* ユーザー情報 */}
       <div className="mb-8">
-        <QiitaUserCard user={user} />
+        <PlatformUserCard
+          platform="qiita"
+          name={user.name}
+          handle={user.id}
+          avatarUrl={user.profile_image_url}
+          stats={[
+            { label: '記事', value: user.items_count },
+            { label: 'フォロワー', value: user.followers_count },
+          ]}
+          profileUrl={`https://qiita.com/${user.id}`}
+        />
       </div>
 
       {/* 統計サマリー */}

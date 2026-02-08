@@ -6,13 +6,18 @@ import dynamic from 'next/dynamic';
 import { ArrowLeft, ExternalLink, Users, VideoIcon, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { YouTubeChannel, YouTubeVideo } from '@/types';
+import { PLATFORM_META } from '@/lib/platform-config';
 import ChannelCard from '@/components/ChannelCard';
 import VideoList from '@/components/VideoList';
 import SortTabs from '@/components/SortTabs';
 import ShareButton from '@/components/ShareButton';
 import SearchBar from '@/components/SearchBar';
+import LoadingState from '@/components/LoadingState';
+import ErrorState from '@/components/ErrorState';
 import { trackChannelView, trackError } from '@/lib/tracking';
 import { formatJapaneseSubscribers, formatJapaneseViews } from '@/lib/format-utils';
+
+const { color } = PLATFORM_META.youtube;
 
 // 重いコンポーネントを動的インポート（Rechartsを含むため）
 const VideoChart = dynamic(() => import('@/components/VideoChart'), {
@@ -73,41 +78,11 @@ export default function ChannelPage() {
   }, [channelId]);
 
   if (isLoading) {
-    return (
-      <div className="container-custom py-8">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF0000]"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">
-            チャンネル情報を取得中...
-          </p>
-        </div>
-      </div>
-    );
+    return <LoadingState message="チャンネル情報を取得中..." color={color} />;
   }
 
   if (error) {
-    return (
-      <div className="container-custom py-8">
-        <div className="card text-center">
-          <div className="text-red-500 mb-4">
-            <ExternalLink className="w-16 h-16 mx-auto mb-4" />
-          </div>
-          <h2 className="text-xl font-bold mb-2">エラーが発生しました</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
-          <div className="space-x-4">
-            <button
-              onClick={() => window.location.reload()}
-              className="btn-primary"
-            >
-              再試行
-            </button>
-            <Link href="/" className="btn-secondary">
-              ホームに戻る
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
+    return <ErrorState error={error} icon={ExternalLink} />;
   }
 
   if (!channel) {
