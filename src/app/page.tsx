@@ -14,7 +14,7 @@ import {
 import { useRouter } from 'next/navigation';
 import SearchBar from '@/components/SearchBar';
 
-type Platform = 'youtube' | 'qiita' | 'zenn';
+type Platform = 'youtube' | 'qiita' | 'zenn' | 'note';
 
 const PLATFORMS = [
   {
@@ -34,6 +34,12 @@ const PLATFORMS = [
     label: 'Zenn',
     color: '#3EA8FF',
     colorDark: '#2B8AD9',
+  },
+  {
+    id: 'note' as Platform,
+    label: 'note',
+    color: '#41C9B4',
+    colorDark: '#2FA898',
   },
 ] as const;
 
@@ -77,7 +83,7 @@ export default function Home() {
             <p className="text-lg text-gray-600 dark:text-gray-400">
               集めて、分析して、ネタにする。
               <br />
-              YouTube・Qiita・Zennの分析で、次のネタを見つけましょう。
+              YouTube・Qiita・Zenn・noteの分析で、次のネタを見つけましょう。
             </p>
           </div>
 
@@ -169,7 +175,9 @@ export default function Home() {
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       {platform === 'qiita'
                         ? 'Qiitaユーザーの記事を分析'
-                        : 'Zennユーザーの記事を分析'}
+                        : platform === 'note'
+                          ? 'noteクリエイターの記事を分析'
+                          : 'Zennユーザーの記事を分析'}
                     </p>
                   </div>
                 </div>
@@ -183,7 +191,9 @@ export default function Home() {
                       placeholder={
                         platform === 'qiita'
                           ? 'Qiitaユーザー名を入力'
-                          : 'Zennユーザー名を入力'
+                          : platform === 'note'
+                            ? 'クリエイター名 で検索'
+                            : 'Zennユーザー名を入力'
                       }
                       className="w-full pl-12 pr-20 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200"
                       style={
@@ -222,6 +232,21 @@ export default function Home() {
                         className="underline transition-colors mx-1 hover:text-[#55C500]"
                       >
                         jnchito
+                      </button>
+                    </>
+                  ) : platform === 'note' ? (
+                    <>
+                      <button
+                        onClick={() => router.push('/note/user/nozomi_iijima')}
+                        className="underline transition-colors mx-1 hover:text-[#41C9B4]"
+                      >
+                        nozomi_iijima
+                      </button>
+                      <button
+                        onClick={() => router.push('/note/user/shinya_matsuyama')}
+                        className="underline transition-colors mx-1 hover:text-[#41C9B4]"
+                      >
+                        shinya_matsuyama
                       </button>
                     </>
                   ) : (
@@ -263,9 +288,7 @@ export default function Home() {
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {platform === 'youtube'
                       ? '人気動画から企画のヒント'
-                      : platform === 'qiita'
-                        ? '人気記事からトレンドを発見'
-                        : '人気記事からトレンドを発見'}
+                      : '人気記事からトレンドを発見'}
                   </p>
                 </div>
               </div>
@@ -328,6 +351,27 @@ export default function Home() {
                       className="underline hover:text-[#00D4FF] transition-colors mx-1"
                     >
                       ゲーム実況
+                    </button>
+                  </>
+                ) : platform === 'note' ? (
+                  <>
+                    <button
+                      onClick={() => router.push('/note/keyword/AI')}
+                      className="underline hover:text-[#41C9B4] transition-colors mx-1"
+                    >
+                      AI
+                    </button>
+                    <button
+                      onClick={() => router.push('/note/keyword/デザイン')}
+                      className="underline hover:text-[#41C9B4] transition-colors mx-1"
+                    >
+                      デザイン
+                    </button>
+                    <button
+                      onClick={() => router.push('/note/keyword/エンジニア')}
+                      className="underline hover:text-[#41C9B4] transition-colors mx-1"
+                    >
+                      エンジニア
                     </button>
                   </>
                 ) : platform === 'qiita' ? (
@@ -394,7 +438,7 @@ export default function Home() {
                 icon: <Layers className="w-6 h-6" />,
                 title: 'マルチプラットフォーム',
                 description:
-                  'YouTube・Qiita・Zennを横断して、コンテンツのトレンドを分析します。',
+                  'YouTube・Qiita・Zenn・noteを横断して、コンテンツのトレンドを分析します。',
               },
               {
                 icon: <TrendingUp className="w-6 h-6" />,
@@ -460,6 +504,7 @@ export default function Home() {
                   'YouTubeキーワード検索（人気50件）',
                   'Qiitaユーザー・キーワード検索',
                   'Zennユーザー・キーワード検索',
+                  'noteクリエイター・キーワード検索',
                   'グラフ・統計表示',
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm">
@@ -518,7 +563,7 @@ export default function Home() {
             今すぐ分析を始めましょう
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-            YouTube・Qiita・Zennの分析が無料で利用できます
+            YouTube・Qiita・Zenn・noteの分析が無料で利用できます
           </p>
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}

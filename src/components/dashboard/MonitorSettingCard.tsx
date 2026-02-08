@@ -4,6 +4,7 @@ import {
   Youtube,
   Code2,
   BookOpen,
+  StickyNote,
   Search,
   Users,
   User,
@@ -25,6 +26,7 @@ export const PLATFORM_MAP: Record<Platform, { label: string; icon: typeof Youtub
   youtube: { label: 'YouTube', icon: Youtube, color: '#FF0000' },
   qiita: { label: 'Qiita', icon: Code2, color: '#55C500' },
   zenn: { label: 'Zenn', icon: BookOpen, color: '#3EA8FF' },
+  note: { label: 'note', icon: StickyNote, color: '#41C9B4' },
 };
 
 export const TYPE_MAP: Record<MonitorType, { label: string; icon: typeof Search }> = {

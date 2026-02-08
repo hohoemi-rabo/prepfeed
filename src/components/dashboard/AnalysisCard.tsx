@@ -1,6 +1,6 @@
 'use client';
 
-import { Youtube, Code2, BookOpen, Search, Users, User, TrendingUp } from 'lucide-react';
+import { Youtube, Code2, BookOpen, StickyNote, Search, Users, User, TrendingUp } from 'lucide-react';
 import type { MonitorSetting } from '@/types/monitor';
 import type { AnalysisResult, SimpleAnalysisResult } from '@/types/analysis';
 import type { Platform, MonitorType } from '@/types/common';
@@ -15,6 +15,7 @@ const PLATFORM_MAP: Record<Platform, { label: string; icon: typeof Youtube; colo
   youtube: { label: 'YouTube', icon: Youtube, color: '#FF0000' },
   qiita: { label: 'Qiita', icon: Code2, color: '#55C500' },
   zenn: { label: 'Zenn', icon: BookOpen, color: '#3EA8FF' },
+  note: { label: 'note', icon: StickyNote, color: '#41C9B4' },
 };
 
 const TYPE_MAP: Record<MonitorType, { label: string; icon: typeof Search }> = {

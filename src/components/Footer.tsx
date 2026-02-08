@@ -21,7 +21,7 @@ export default function Footer() {
               PrepFeed
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              YouTube・Qiita・Zennの分析で企画のネタ出しをサポート。
+              YouTube・Qiita・Zenn・noteの分析で企画のネタ出しをサポート。
             </p>
             <div className="flex space-x-4">
               <a
@@ -89,8 +89,8 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-bold mb-4">ご利用にあたって</h3>
             <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-              本サービスはYouTube・Qiita・Zennの公開データを利用した参考値を提供します。
-              本サービスはGoogle LLC・Qiita株式会社・クラスメソッド株式会社と提携していません。
+              本サービスはYouTube・Qiita・Zenn・noteの公開データを利用した参考値を提供します。
+              本サービスはGoogle LLC・Qiita株式会社・クラスメソッド株式会社・note株式会社と提携していません。
               データの正確性・完全性は保証いたしません。
               分析結果は参考情報としてご利用ください。
             </p>

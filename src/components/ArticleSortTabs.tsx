@@ -3,7 +3,7 @@
 import { ThumbsUp, Calendar, Bookmark, TrendingUp, ArrowUpDown } from 'lucide-react';
 import { ArticleSortType, ArticleSortOrder, getArticleSortDisplayName } from '@/lib/article-sort-utils';
 
-type Platform = 'qiita' | 'zenn';
+type Platform = 'qiita' | 'zenn' | 'note';
 
 interface SortOption {
   type: ArticleSortType;
@@ -60,9 +60,31 @@ const zennSortOptions: SortOption[] = [
   },
 ];
 
+const noteSortOptions: SortOption[] = [
+  {
+    type: 'date',
+    label: '投稿日',
+    icon: <Calendar className="w-4 h-4" />,
+    description: '投稿が新しい順',
+  },
+  {
+    type: 'likes',
+    label: 'スキ数',
+    icon: <ThumbsUp className="w-4 h-4" />,
+    description: 'スキ数の多い順',
+  },
+  {
+    type: 'growth',
+    label: '伸び率',
+    icon: <TrendingUp className="w-4 h-4" />,
+    description: '1日あたりのスキ数',
+  },
+];
+
 const platformColors: Record<Platform, string> = {
   qiita: '#55C500',
   zenn: '#3EA8FF',
+  note: '#41C9B4',
 };
 
 interface ArticleSortTabsProps {
@@ -80,7 +102,7 @@ export default function ArticleSortTabs({
   onSortTypeChange,
   onSortOrderToggle,
 }: ArticleSortTabsProps) {
-  const sortOptions = platform === 'qiita' ? qiitaSortOptions : zennSortOptions;
+  const sortOptions = platform === 'qiita' ? qiitaSortOptions : platform === 'note' ? noteSortOptions : zennSortOptions;
   const accentColor = platformColors[platform];
 
   const getSortOrderLabel = () => {

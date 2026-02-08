@@ -7,7 +7,7 @@ Domain-specific rules are in `.claude/rules/` and loaded conditionally by file p
 
 **PrepFeed** — 集めて、分析して、ネタにする。
 
-YouTube・Qiita・Zennの公開データを分析し、コンテンツ企画のネタ出しをサポートするツール。
+YouTube・Qiita・Zenn・noteの公開データを分析し、コンテンツ企画のネタ出しをサポートするツール。
 Next.js 15 (App Router) + React 19 + TypeScript + Tailwind CSS + Supabase で構築。
 
 **旧名称**: チャンネルスコープ → YouTubeスコープ → PrepFeed
@@ -45,6 +45,7 @@ npm run lint       # Run ESLint
 │   ├── api/youtube/        # YouTube API (search, channel/[id], keyword)
 │   ├── api/qiita/          # Qiita API (user/[id], keyword)
 │   ├── api/zenn/           # Zenn API (user/[username], keyword)
+│   ├── api/note/           # note API (user/[urlname], keyword)
 │   ├── api/settings/       # 監視設定 CRUD API
 │   ├── api/analysis/       # 分析結果 API (list, detail, detailed, status)
 │   ├── api/logs/           # 取得ログ API (pagination, filters)
@@ -64,10 +65,13 @@ npm run lint       # Run ESLint
 │   ├── disclaimer/         # Disclaimer page
 │   ├── privacy/            # Privacy policy
 │   ├── layout.tsx          # Root layout (fetches user for Header)
-│   └── page.tsx            # Home page (3-platform tabs)
+│   ├── note/user/[urlname]/       # note user page
+│   ├── note/keyword/[query]/      # note keyword search page
+│   └── page.tsx            # Home page (4-platform tabs)
 ├── components/             # React components
 │   ├── Header.tsx          # Sticky header with auth UI
-│   ├── Footer.tsx          # Footer with 3-platform disclaimer
+│   ├── Footer.tsx          # Footer with 4-platform disclaimer
+│   ├── NoteUserCard.tsx    # note user profile card
 │   ├── UserMenu.tsx        # Avatar dropdown (authenticated)
 │   └── dashboard/          # Dashboard components
 │       ├── DashboardNav.tsx       # タブナビ（分析/設定/エクスポート）
@@ -88,6 +92,7 @@ npm run lint       # Run ESLint
 │   ├── youtube.ts          # YouTube API client (singleton)
 │   ├── qiita.ts            # Qiita API client (singleton)
 │   ├── zenn.ts             # Zenn API client (singleton, 非公式API)
+│   ├── note.ts             # note API client (singleton, 非公式API, 1500msスロットリング)
 │   ├── gemini.ts           # Gemini AI client (singleton, retry付き)
 │   ├── monitor.ts          # 監視設定ビジネスロジック
 │   ├── analysis.ts         # AI分析ビジネスロジック
@@ -95,7 +100,7 @@ npm run lint       # Run ESLint
 │   ├── batch-processor.ts  # バッチ処理（全設定一括 / ユーザー別）
 │   ├── background-jobs.ts  # ジョブ管理ユーティリティ
 │   ├── fetch-log.ts        # 取得ログユーティリティ
-│   ├── error-handler.ts    # エラー分類（15種別）
+│   ├── error-handler.ts    # エラー分類（16種別）
 │   ├── tracking.ts         # Vercel Analytics イベント追跡
 │   ├── format-utils.ts     # 数値・日時フォーマット
 │   ├── cache.ts            # Cache (Vercel KV / in-memory)
@@ -104,6 +109,7 @@ npm run lint       # Run ESLint
 │   ├── index.ts            # YouTube types + Phase 2 re-exports
 │   ├── qiita.ts            # Qiita types
 │   ├── zenn.ts             # Zenn types
+│   ├── note.ts             # note types
 │   ├── common.ts           # Platform, MonitorType, JobStatus, FetchCount
 │   ├── monitor.ts          # MonitorSetting, FetchLog
 │   ├── analysis.ts         # AnalysisResult, SimpleAnalysisResult, DetailedAnalysisResult
@@ -113,7 +119,7 @@ npm run lint       # Run ESLint
 /docs                       # チケット管理（001-045）
 ```
 
-## Search Methods (3 Platforms)
+## Search Methods (4 Platforms)
 
 ### YouTube
 - **チャンネル分析**: `/` → `/youtube/channel/[id]` | Red gradient | SearchBar component
@@ -126,6 +132,11 @@ npm run lint       # Run ESLint
 ### Zenn
 - **ユーザー検索**: `/` → `/zenn/user/[id]` | Blue gradient (#3EA8FF)
 - **キーワード検索**: `/` → `/zenn/keyword/[query]` | Blue gradient (#3EA8FF)
+
+### note
+- **ユーザー検索**: `/` → `/note/user/[urlname]` | Teal gradient (#41C9B4)
+- **キーワード検索**: `/` → `/note/keyword/[query]` | Teal gradient (#41C9B4)
+- **注意**: 非公式API使用、1500msスロットリング、キャッシュ60分、取得上限50件/回
 
 ## Authentication (Supabase Auth)
 
@@ -255,6 +266,7 @@ Phase 2 完了チケット:
 - 042: バックグラウンドジョブ管理ユーティリティ
 - 043: 取得ログ（ストレージ・表示・フィルタ・ページネーション）
 - 044: エラーハンドリング強化（15種別 + Phase 2トラッキング）
+- 045: note.comプラットフォーム追加（非公式API、スロットリング、4プラットフォーム対応）
 
 Phase 1 完了機能:
 - Channel search with autocomplete, Latest 50 videos analysis

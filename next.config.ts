@@ -47,6 +47,26 @@ const nextConfig: NextConfig = {
         hostname: 'storage.googleapis.com',
         pathname: '/zenn-user-upload/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'assets.st-note.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'd2l930y2yx77uc.cloudfront.net',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.note.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.note.mu',
+        pathname: '/**',
+      },
     ],
   },
 };

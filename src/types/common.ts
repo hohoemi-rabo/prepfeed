@@ -1,6 +1,6 @@
 // Platform & Common Types
 
-export type Platform = 'youtube' | 'qiita' | 'zenn';
+export type Platform = 'youtube' | 'qiita' | 'zenn' | 'note';
 
 export type MonitorType = 'keyword' | 'channel' | 'user';
 

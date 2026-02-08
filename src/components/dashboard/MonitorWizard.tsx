@@ -6,6 +6,7 @@ import {
   Youtube,
   Code2,
   BookOpen,
+  StickyNote,
   Search,
   Users,
   User,
@@ -70,6 +71,16 @@ const PLATFORM_CONFIG = {
     types: [
       { value: 'keyword' as MonitorType, label: 'キーワード', icon: Search, description: 'トピックに関連する記事を監視' },
       { value: 'user' as MonitorType, label: 'ユーザー', icon: User, description: '特定ユーザーの投稿を監視' },
+    ],
+  },
+  note: {
+    label: 'note',
+    icon: StickyNote,
+    color: '#41C9B4',
+    description: 'クリエイターの記事を監視',
+    types: [
+      { value: 'keyword' as MonitorType, label: 'キーワード', icon: Search, description: 'キーワードに関連する記事を監視' },
+      { value: 'user' as MonitorType, label: 'ユーザー', icon: User, description: '特定クリエイターの投稿を監視' },
     ],
   },
 };
@@ -219,6 +230,7 @@ export default function MonitorWizard({ onComplete, onCancel }: MonitorWizardPro
       return state.platform === 'youtube' ? '例: React チュートリアル' : '例: Next.js';
     }
     if (state.platform === 'qiita') return '例: Qiita';
+    if (state.platform === 'note') return '例: nozomi_iijima';
     return '例: catnose99';
   };
 
@@ -284,7 +296,7 @@ export default function MonitorWizard({ onComplete, onCancel }: MonitorWizardPro
           {step === 1 && (
             <div>
               <h3 className="text-xl font-bold mb-6">プラットフォームを選択</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {(Object.entries(PLATFORM_CONFIG) as [Platform, typeof PLATFORM_CONFIG.youtube][]).map(
                   ([key, config]) => {
                     const Icon = config.icon;

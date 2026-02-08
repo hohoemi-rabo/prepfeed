@@ -5,6 +5,7 @@ import {
   Youtube,
   Code2,
   BookOpen,
+  StickyNote,
   CheckCircle2,
   XCircle,
   ChevronDown,
@@ -23,18 +24,21 @@ const PLATFORM_ICONS: Record<Platform, typeof Youtube> = {
   youtube: Youtube,
   qiita: Code2,
   zenn: BookOpen,
+  note: StickyNote,
 };
 
 const PLATFORM_COLORS: Record<Platform, string> = {
   youtube: '#FF0000',
   qiita: '#55C500',
   zenn: '#3EA8FF',
+  note: '#41C9B4',
 };
 
 const PLATFORM_LABELS: Record<Platform, string> = {
   youtube: 'YouTube',
   qiita: 'Qiita',
   zenn: 'Zenn',
+  note: 'note',
 };
 
 export default function FetchLogList({

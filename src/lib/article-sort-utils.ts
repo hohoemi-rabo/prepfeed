@@ -1,10 +1,11 @@
 import { QiitaArticle } from '@/types/qiita';
 import { ZennArticle } from '@/types/zenn';
+import { NoteArticle } from '@/types/note';
 
 export type ArticleSortType = 'likes' | 'date' | 'stocks' | 'growth';
 export type ArticleSortOrder = 'asc' | 'desc';
 
-type Article = QiitaArticle | ZennArticle;
+type Article = QiitaArticle | ZennArticle | NoteArticle;
 
 /**
  * いいね数を取得（プラットフォームごとにフィールド名が異なる）
@@ -12,6 +13,7 @@ type Article = QiitaArticle | ZennArticle;
 function getLikesCount(article: Article): number {
   if ('likes_count' in article) return article.likes_count;
   if ('liked_count' in article) return article.liked_count;
+  if ('like_count' in article) return article.like_count;
   return 0;
 }
 

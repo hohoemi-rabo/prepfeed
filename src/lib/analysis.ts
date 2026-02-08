@@ -105,6 +105,17 @@ function buildDetailedAnalysisPrompt(
       growth_rate: d.growth_rate,
     }));
 
+  const noteData = collectedData
+    .filter((d) => d.platform === 'note')
+    .map((d) => ({
+      title: d.title,
+      url: d.url,
+      likes: d.likes,
+      comments: d.comments,
+      published_at: d.published_at,
+      growth_rate: d.growth_rate,
+    }));
+
   return `あなたはコンテンツマーケティングの専門家です。
 以下の複数プラットフォームのデータを横断分析し、
 クリエイター向けの実用的なレポートを作成してください。
@@ -120,6 +131,9 @@ ${qiitaData.length > 0 ? JSON.stringify(qiitaData, null, 2) : 'データなし'}
 
 【Zenn データ】（${zennData.length}件）
 ${zennData.length > 0 ? JSON.stringify(zennData, null, 2) : 'データなし'}
+
+【note データ】（${noteData.length}件）
+${noteData.length > 0 ? JSON.stringify(noteData, null, 2) : 'データなし'}
 
 【出力形式】
 以下のJSON形式で正確に出力してください。他のテキストは含めないでください。
@@ -154,8 +168,8 @@ ${zennData.length > 0 ? JSON.stringify(zennData, null, 2) : 'データなし'}
 【注意事項】
 - content_ideasは3〜5件
 - recommendationsは3〜5件
-- platformsの値は "youtube", "qiita", "zenn" のいずれか
-- platform_recommendationの値は "youtube", "qiita", "zenn" のいずれか
+- platformsの値は "youtube", "qiita", "zenn", "note" のいずれか
+- platform_recommendationの値は "youtube", "qiita", "zenn", "note" のいずれか
 - 具体的な数値やデータに基づいた分析をしてください
 - 実行可能なアクションを提案してください
 - 日本語で出力してください`;

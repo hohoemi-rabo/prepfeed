@@ -12,9 +12,10 @@ export enum ErrorType {
   INVALID_REQUEST = 'INVALID_REQUEST',
   UNKNOWN_ERROR = 'UNKNOWN_ERROR',
 
-  // Phase 2: Qiita / Zenn
+  // Phase 2: Qiita / Zenn / note
   QIITA_API_ERROR = 'QIITA_API_ERROR',
   ZENN_API_ERROR = 'ZENN_API_ERROR',
+  NOTE_API_ERROR = 'NOTE_API_ERROR',
 
   // Phase 2: Gemini AI
   GEMINI_API_ERROR = 'GEMINI_API_ERROR',
@@ -147,6 +148,18 @@ export function classifyError(error: unknown): AppError {
       canRetry: true,
       retryAfter: 60,
       hint: 'Qiita APIのレート制限に達した可能性があります。',
+    };
+  }
+
+  // note.com API エラー
+  if (lowerMessage.includes('note.com') || lowerMessage.includes('note api')) {
+    return {
+      type: ErrorType.NOTE_API_ERROR,
+      message: errorMessage,
+      userMessage: 'note.com APIでエラーが発生しました。しばらく待ってから再度お試しください。',
+      canRetry: true,
+      retryAfter: 120,
+      hint: 'note.com APIの仕様変更やメンテナンスの可能性があります。',
     };
   }
 

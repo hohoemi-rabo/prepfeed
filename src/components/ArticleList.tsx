@@ -3,12 +3,13 @@
 import { useState, useMemo, useEffect } from 'react';
 import { QiitaArticle } from '@/types/qiita';
 import { ZennArticle } from '@/types/zenn';
+import { NoteArticle } from '@/types/note';
 import { sortArticles, ArticleSortType, ArticleSortOrder } from '@/lib/article-sort-utils';
 import ArticleCard from './ArticleCard';
 
-type Platform = 'qiita' | 'zenn';
+type Platform = 'qiita' | 'zenn' | 'note';
 
-type Article = QiitaArticle | ZennArticle;
+type Article = QiitaArticle | ZennArticle | NoteArticle;
 
 interface ArticleListProps {
   articles: Article[];

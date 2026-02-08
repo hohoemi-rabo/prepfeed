@@ -5,6 +5,7 @@
  * @returns フォーマットされた文字列
  */
 export function formatJapaneseNumber(num: number, decimals: number = 1): string {
+  if (num == null || isNaN(num)) return '0';
   if (num >= 100000000) {
     // 1億以上
     const value = num / 100000000;

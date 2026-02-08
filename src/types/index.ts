@@ -2,6 +2,7 @@
 export * from './common';
 export * from './qiita';
 export * from './zenn';
+export * from './note';
 export * from './monitor';
 export * from './user';
 export * from './collected-data';

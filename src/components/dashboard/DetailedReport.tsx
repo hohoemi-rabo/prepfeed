@@ -9,6 +9,7 @@ import {
   Youtube,
   Code2,
   BookOpen,
+  StickyNote,
   Tag,
 } from 'lucide-react';
 import type { DetailedAnalysisResult } from '@/types/analysis';
@@ -23,12 +24,14 @@ const PLATFORM_ICONS: Record<Platform, typeof Youtube> = {
   youtube: Youtube,
   qiita: Code2,
   zenn: BookOpen,
+  note: StickyNote,
 };
 
 const PLATFORM_COLORS: Record<Platform, string> = {
   youtube: '#FF0000',
   qiita: '#55C500',
   zenn: '#3EA8FF',
+  note: '#41C9B4',
 };
 
 function PlatformBadge({ platform }: { platform: Platform }) {

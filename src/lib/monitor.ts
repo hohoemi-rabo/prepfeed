@@ -7,11 +7,13 @@ import { createClient } from '@/lib/supabase/server';
 import youtubeClient from '@/lib/youtube';
 import { qiitaClient } from '@/lib/qiita';
 import { zennClient } from '@/lib/zenn';
+import { noteClient } from '@/lib/note';
 import type { Platform, MonitorType, FetchCount, FetchLogStatus } from '@/types/common';
 import type { MonitorSetting } from '@/types/monitor';
 import type { YouTubeVideo } from '@/types';
 import type { QiitaArticle } from '@/types/qiita';
 import type { ZennArticle } from '@/types/zenn';
+import type { NoteArticle } from '@/types/note';
 
 // ─── バリデーション ───
 
@@ -19,6 +21,7 @@ const VALID_PLATFORM_TYPES: Record<Platform, MonitorType[]> = {
   youtube: ['keyword', 'channel'],
   qiita: ['keyword', 'user'],
   zenn: ['keyword', 'user'],
+  note: ['keyword', 'user'],
 };
 
 /**
@@ -28,7 +31,7 @@ export function validatePlatformType(
   platform: string,
   type: string
 ): { valid: boolean; error?: string } {
-  if (!['youtube', 'qiita', 'zenn'].includes(platform)) {
+  if (!['youtube', 'qiita', 'zenn', 'note'].includes(platform)) {
     return { valid: false, error: `無効なプラットフォーム: ${platform}` };
   }
   if (!['keyword', 'channel', 'user'].includes(type)) {
@@ -140,6 +143,27 @@ export function transformZennData(
   }));
 }
 
+export function transformNoteData(
+  articles: NoteArticle[],
+  userId: string,
+  settingId: string
+): CollectedDataInsert[] {
+  return articles.map((a) => ({
+    user_id: userId,
+    setting_id: settingId,
+    platform: 'note' as Platform,
+    content_id: a.id,
+    title: a.title,
+    url: a.url,
+    published_at: a.published_at,
+    author_id: a.author_urlname,
+    author_name: a.author_name,
+    likes: a.like_count,
+    comments: a.comment_count,
+    growth_rate: a.growth_rate,
+  }));
+}
+
 // ─── 初回データ取得 ───
 
 /**
@@ -192,6 +216,13 @@ export async function fetchInitialData(
       case 'zenn':
         collectedData = transformZennData(
           data as ZennArticle[],
+          userId,
+          setting.id
+        );
+        break;
+      case 'note':
+        collectedData = transformNoteData(
+          data as NoteArticle[],
           userId,
           setting.id
         );
@@ -254,7 +285,7 @@ export async function fetchPlatformData(
   type: MonitorType,
   value: string,
   fetchCount: FetchCount
-): Promise<YouTubeVideo[] | QiitaArticle[] | ZennArticle[]> {
+): Promise<YouTubeVideo[] | QiitaArticle[] | ZennArticle[] | NoteArticle[]> {
   switch (platform) {
     case 'youtube':
       if (type === 'channel') {
@@ -273,6 +304,12 @@ export async function fetchPlatformData(
         return zennClient.getUserArticles(value, Math.min(fetchCount, 100));
       }
       return zennClient.searchArticlesByTopic(value, Math.min(fetchCount, 100));
+
+    case 'note':
+      if (type === 'user') {
+        return noteClient.getUserArticles(value, Math.min(fetchCount, 50));
+      }
+      return noteClient.searchArticles(value, Math.min(fetchCount, 50));
 
     default:
       throw new Error(`未対応のプラットフォーム: ${platform}`);

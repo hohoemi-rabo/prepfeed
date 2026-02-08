@@ -10,6 +10,7 @@ import {
   transformYouTubeData,
   transformQiitaData,
   transformZennData,
+  transformNoteData,
 } from '@/lib/monitor';
 import {
   upsertCollectedData,
@@ -23,6 +24,7 @@ import type { CollectedDataInsert } from '@/lib/monitor';
 import type { YouTubeVideo } from '@/types';
 import type { QiitaArticle } from '@/types/qiita';
 import type { ZennArticle } from '@/types/zenn';
+import type { NoteArticle } from '@/types/note';
 
 const DELAY_BETWEEN_SETTINGS_MS = 1000;
 const TIME_BUDGET_MARGIN_MS = 10_000;
@@ -226,6 +228,13 @@ async function processSetting(
     case 'zenn':
       collectedData = transformZennData(
         rawData as ZennArticle[],
+        userId,
+        setting.id
+      );
+      break;
+    case 'note':
+      collectedData = transformNoteData(
+        rawData as NoteArticle[],
         userId,
         setting.id
       );

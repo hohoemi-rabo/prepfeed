@@ -1,6 +1,6 @@
 'use client';
 
-import { Youtube, Code2, BookOpen } from 'lucide-react';
+import { Youtube, Code2, BookOpen, StickyNote } from 'lucide-react';
 import type { Platform, FetchLogStatus } from '@/types/common';
 
 interface FetchLogFiltersProps {
@@ -15,6 +15,7 @@ const PLATFORM_OPTIONS: { value: Platform | ''; label: string; icon?: typeof You
   { value: 'youtube', label: 'YouTube', icon: Youtube },
   { value: 'qiita', label: 'Qiita', icon: Code2 },
   { value: 'zenn', label: 'Zenn', icon: BookOpen },
+  { value: 'note', label: 'note', icon: StickyNote },
 ];
 
 const STATUS_OPTIONS: { value: FetchLogStatus | ''; label: string }[] = [

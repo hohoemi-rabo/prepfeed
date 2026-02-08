@@ -4,12 +4,13 @@ import { useRouter } from 'next/navigation';
 import { ExternalLink, ThumbsUp, Bookmark, TrendingUp, Calendar, Sparkles, Hash } from 'lucide-react';
 import { QiitaArticle } from '@/types/qiita';
 import { ZennArticle } from '@/types/zenn';
+import { NoteArticle } from '@/types/note';
 import { formatJapaneseNumber } from '@/lib/format-utils';
 
-type Platform = 'qiita' | 'zenn';
+type Platform = 'qiita' | 'zenn' | 'note';
 
 interface ArticleCardProps {
-  article: QiitaArticle | ZennArticle;
+  article: QiitaArticle | ZennArticle | NoteArticle;
   platform: Platform;
 }
 
@@ -24,6 +25,11 @@ const platformConfig = {
     color: '#3EA8FF',
     linkLabel: 'Zennで読む',
   },
+  note: {
+    label: 'note',
+    color: '#41C9B4',
+    linkLabel: 'noteで読む',
+  },
 } as const;
 
 export default function ArticleCard({ article, platform }: ArticleCardProps) {
@@ -33,10 +39,17 @@ export default function ArticleCard({ article, platform }: ArticleCardProps) {
   const likesCount =
     platform === 'qiita'
       ? (article as QiitaArticle).likes_count
-      : (article as ZennArticle).liked_count;
+      : platform === 'note'
+        ? (article as NoteArticle).like_count
+        : (article as ZennArticle).liked_count;
 
   const stocksCount =
     platform === 'qiita' ? (article as QiitaArticle).stocks_count : null;
+
+  const authorName =
+    platform === 'note'
+      ? (article as NoteArticle).author_name
+      : article.author_name;
 
   const tags =
     platform === 'qiita' ? (article as QiitaArticle).tags : null;
@@ -88,7 +101,7 @@ export default function ArticleCard({ article, platform }: ArticleCardProps) {
               {config.label}
             </span>
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              {article.author_name}
+              {authorName}
             </span>
           </div>
           <div className="flex gap-1">
@@ -133,7 +146,7 @@ export default function ArticleCard({ article, platform }: ArticleCardProps) {
           <div className="flex items-center gap-2 text-sm">
             <ThumbsUp className="w-4 h-4 text-gray-500" />
             <span className="font-medium">{formatJapaneseNumber(likesCount)}</span>
-            <span className="text-gray-500">いいね</span>
+            <span className="text-gray-500">{platform === 'note' ? 'スキ' : 'いいね'}</span>
           </div>
           {stocksCount !== null && (
             <div className="flex items-center gap-2 text-sm">
