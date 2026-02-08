@@ -2,44 +2,19 @@
 
 import { useState } from 'react';
 import {
-  Youtube,
-  Code2,
-  BookOpen,
-  StickyNote,
   CheckCircle2,
   XCircle,
   ChevronDown,
   ChevronRight,
 } from 'lucide-react';
 import type { FetchLog } from '@/types/monitor';
-import type { Platform } from '@/types/common';
 import { formatRelativeTime } from '@/lib/format-utils';
+import { PLATFORM_META } from '@/lib/platform-config';
 
 interface FetchLogListProps {
   logs: FetchLog[];
   variant?: 'compact' | 'full';
 }
-
-const PLATFORM_ICONS: Record<Platform, typeof Youtube> = {
-  youtube: Youtube,
-  qiita: Code2,
-  zenn: BookOpen,
-  note: StickyNote,
-};
-
-const PLATFORM_COLORS: Record<Platform, string> = {
-  youtube: '#FF0000',
-  qiita: '#55C500',
-  zenn: '#3EA8FF',
-  note: '#41C9B4',
-};
-
-const PLATFORM_LABELS: Record<Platform, string> = {
-  youtube: 'YouTube',
-  qiita: 'Qiita',
-  zenn: 'Zenn',
-  note: 'note',
-};
 
 export default function FetchLogList({
   logs,
@@ -59,8 +34,7 @@ export default function FetchLogList({
     return (
       <div className="space-y-2">
         {logs.map((log) => {
-          const Icon = PLATFORM_ICONS[log.platform];
-          const color = PLATFORM_COLORS[log.platform];
+          const { icon: Icon, color } = PLATFORM_META[log.platform];
 
           return (
             <div
@@ -95,8 +69,7 @@ export default function FetchLogList({
   return (
     <div className="space-y-2">
       {logs.map((log) => {
-        const Icon = PLATFORM_ICONS[log.platform];
-        const color = PLATFORM_COLORS[log.platform];
+        const { icon: Icon, color } = PLATFORM_META[log.platform];
         const isExpanded = expandedId === log.id;
         const hasError = log.status === 'error' && log.error_message;
 
@@ -130,7 +103,7 @@ export default function FetchLogList({
               <div className="flex items-center gap-1.5 flex-shrink-0 w-24">
                 <Icon className="w-4 h-4" style={{ color }} />
                 <span className="text-gray-600 dark:text-gray-300 text-xs">
-                  {PLATFORM_LABELS[log.platform]}
+                  {PLATFORM_META[log.platform].label}
                 </span>
               </div>
 

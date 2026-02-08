@@ -3,10 +3,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Youtube,
-  Code2,
-  BookOpen,
-  StickyNote,
   Search,
   Users,
   User,
@@ -19,6 +15,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import type { Platform, MonitorType, FetchCount } from '@/types/common';
+import { PLATFORM_META } from '@/lib/platform-config';
 
 interface YouTubeChannelResult {
   id: string;
@@ -42,45 +39,36 @@ interface WizardState {
   fetchCount: FetchCount;
 }
 
-const PLATFORM_CONFIG = {
+const WIZARD_PLATFORM_CONFIG: Record<Platform, {
+  description: string;
+  types: { value: MonitorType; label: string; icon: typeof Search; description: string }[];
+}> = {
   youtube: {
-    label: 'YouTube',
-    icon: Youtube,
-    color: '#FF0000',
     description: '動画・チャンネルのトレンドを監視',
     types: [
-      { value: 'keyword' as MonitorType, label: 'キーワード', icon: Search, description: 'キーワードに関連する動画を監視' },
-      { value: 'channel' as MonitorType, label: 'チャンネル', icon: Users, description: '特定チャンネルの新着動画を監視' },
+      { value: 'keyword', label: 'キーワード', icon: Search, description: 'キーワードに関連する動画を監視' },
+      { value: 'channel', label: 'チャンネル', icon: Users, description: '特定チャンネルの新着動画を監視' },
     ],
   },
   qiita: {
-    label: 'Qiita',
-    icon: Code2,
-    color: '#55C500',
     description: '技術記事のトレンドを監視',
     types: [
-      { value: 'keyword' as MonitorType, label: 'キーワード', icon: Search, description: 'キーワードに関連する記事を監視' },
-      { value: 'user' as MonitorType, label: 'ユーザー', icon: User, description: '特定ユーザーの投稿を監視' },
+      { value: 'keyword', label: 'キーワード', icon: Search, description: 'キーワードに関連する記事を監視' },
+      { value: 'user', label: 'ユーザー', icon: User, description: '特定ユーザーの投稿を監視' },
     ],
   },
   zenn: {
-    label: 'Zenn',
-    icon: BookOpen,
-    color: '#3EA8FF',
     description: '技術記事・スクラップを監視',
     types: [
-      { value: 'keyword' as MonitorType, label: 'キーワード', icon: Search, description: 'トピックに関連する記事を監視' },
-      { value: 'user' as MonitorType, label: 'ユーザー', icon: User, description: '特定ユーザーの投稿を監視' },
+      { value: 'keyword', label: 'キーワード', icon: Search, description: 'トピックに関連する記事を監視' },
+      { value: 'user', label: 'ユーザー', icon: User, description: '特定ユーザーの投稿を監視' },
     ],
   },
   note: {
-    label: 'note',
-    icon: StickyNote,
-    color: '#41C9B4',
     description: 'クリエイターの記事を監視',
     types: [
-      { value: 'keyword' as MonitorType, label: 'キーワード', icon: Search, description: 'キーワードに関連する記事を監視' },
-      { value: 'user' as MonitorType, label: 'ユーザー', icon: User, description: '特定クリエイターの投稿を監視' },
+      { value: 'keyword', label: 'キーワード', icon: Search, description: 'キーワードに関連する記事を監視' },
+      { value: 'user', label: 'ユーザー', icon: User, description: '特定クリエイターの投稿を監視' },
     ],
   },
 };
@@ -175,8 +163,9 @@ export default function MonitorWizard({ onComplete, onCancel }: MonitorWizardPro
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const platformConfig = state.platform ? PLATFORM_CONFIG[state.platform] : null;
-  const accentColor = platformConfig?.color || '#FF0000';
+  const platformMeta = state.platform ? PLATFORM_META[state.platform] : null;
+  const wizardConfig = state.platform ? WIZARD_PLATFORM_CONFIG[state.platform] : null;
+  const accentColor = platformMeta?.color || '#FF0000';
 
   const canProceed = () => {
     switch (step) {
@@ -223,6 +212,7 @@ export default function MonitorWizard({ onComplete, onCancel }: MonitorWizardPro
   };
 
   const isChannelSearch = state.platform === 'youtube' && state.type === 'channel';
+  const ChannelFallbackIcon = PLATFORM_META.youtube.icon;
 
   const getValuePlaceholder = () => {
     if (!state.platform || !state.type) return '';
@@ -297,9 +287,11 @@ export default function MonitorWizard({ onComplete, onCancel }: MonitorWizardPro
             <div>
               <h3 className="text-xl font-bold mb-6">プラットフォームを選択</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {(Object.entries(PLATFORM_CONFIG) as [Platform, typeof PLATFORM_CONFIG.youtube][]).map(
-                  ([key, config]) => {
-                    const Icon = config.icon;
+                {(Object.keys(WIZARD_PLATFORM_CONFIG) as Platform[]).map(
+                  (key) => {
+                    const meta = PLATFORM_META[key];
+                    const wConfig = WIZARD_PLATFORM_CONFIG[key];
+                    const Icon = meta.icon;
                     const isSelected = state.platform === key;
                     return (
                       <button
@@ -312,17 +304,17 @@ export default function MonitorWizard({ onComplete, onCancel }: MonitorWizardPro
                         }`}
                         style={
                           isSelected
-                            ? { borderColor: config.color, backgroundColor: `${config.color}10` }
+                            ? { borderColor: meta.color, backgroundColor: `${meta.color}10` }
                             : undefined
                         }
                       >
                         <Icon
                           className="w-8 h-8 mb-3"
-                          style={{ color: config.color }}
+                          style={{ color: meta.color }}
                         />
-                        <div className="font-bold text-lg">{config.label}</div>
+                        <div className="font-bold text-lg">{meta.label}</div>
                         <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                          {config.description}
+                          {wConfig.description}
                         </div>
                       </button>
                     );
@@ -333,11 +325,11 @@ export default function MonitorWizard({ onComplete, onCancel }: MonitorWizardPro
           )}
 
           {/* Step 2: タイプ選択 */}
-          {step === 2 && platformConfig && (
+          {step === 2 && wizardConfig && (
             <div>
               <h3 className="text-xl font-bold mb-6">監視タイプを選択</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {platformConfig.types.map((t) => {
+                {wizardConfig.types.map((t) => {
                   const Icon = t.icon;
                   const isSelected = state.type === t.value;
                   return (
@@ -418,7 +410,7 @@ export default function MonitorWizard({ onComplete, onCancel }: MonitorWizardPro
                                 />
                               ) : (
                                 <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
-                                  <Youtube className="w-5 h-5 text-gray-400" />
+                                  <ChannelFallbackIcon className="w-5 h-5 text-gray-400" />
                                 </div>
                               )}
                               <div className="min-w-0 flex-1">
@@ -453,7 +445,7 @@ export default function MonitorWizard({ onComplete, onCancel }: MonitorWizardPro
                           />
                         ) : (
                           <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
-                            <Youtube className="w-5 h-5 text-gray-400" />
+                            <ChannelFallbackIcon className="w-5 h-5 text-gray-400" />
                           </div>
                         )}
                         <div className="min-w-0 flex-1">
@@ -588,7 +580,7 @@ export default function MonitorWizard({ onComplete, onCancel }: MonitorWizardPro
                     <div className="flex justify-between py-3 border-b border-gray-200 dark:border-gray-700">
                       <span className="text-gray-500">プラットフォーム</span>
                       <span className="font-medium" style={{ color: accentColor }}>
-                        {platformConfig?.label}
+                        {platformMeta?.label}
                       </span>
                     </div>
                     <div className="flex justify-between py-3 border-b border-gray-200 dark:border-gray-700">

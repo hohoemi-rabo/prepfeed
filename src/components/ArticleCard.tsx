@@ -6,35 +6,18 @@ import { QiitaArticle } from '@/types/qiita';
 import { ZennArticle } from '@/types/zenn';
 import { NoteArticle } from '@/types/note';
 import { formatJapaneseNumber } from '@/lib/format-utils';
+import { PLATFORM_META } from '@/lib/platform-config';
 
-type Platform = 'qiita' | 'zenn' | 'note';
+type ArticlePlatform = 'qiita' | 'zenn' | 'note';
 
 interface ArticleCardProps {
   article: QiitaArticle | ZennArticle | NoteArticle;
-  platform: Platform;
+  platform: ArticlePlatform;
 }
-
-const platformConfig = {
-  qiita: {
-    label: 'Qiita',
-    color: '#55C500',
-    linkLabel: 'Qiitaで読む',
-  },
-  zenn: {
-    label: 'Zenn',
-    color: '#3EA8FF',
-    linkLabel: 'Zennで読む',
-  },
-  note: {
-    label: 'note',
-    color: '#41C9B4',
-    linkLabel: 'noteで読む',
-  },
-} as const;
 
 export default function ArticleCard({ article, platform }: ArticleCardProps) {
   const router = useRouter();
-  const config = platformConfig[platform];
+  const config = PLATFORM_META[platform];
 
   const likesCount =
     platform === 'qiita'

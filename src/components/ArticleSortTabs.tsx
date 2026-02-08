@@ -2,6 +2,7 @@
 
 import { ThumbsUp, Calendar, Bookmark, TrendingUp, ArrowUpDown } from 'lucide-react';
 import { ArticleSortType, ArticleSortOrder, getArticleSortDisplayName } from '@/lib/article-sort-utils';
+import { PLATFORM_META } from '@/lib/platform-config';
 
 type Platform = 'qiita' | 'zenn' | 'note';
 
@@ -81,11 +82,6 @@ const noteSortOptions: SortOption[] = [
   },
 ];
 
-const platformColors: Record<Platform, string> = {
-  qiita: '#55C500',
-  zenn: '#3EA8FF',
-  note: '#41C9B4',
-};
 
 interface ArticleSortTabsProps {
   platform: Platform;
@@ -103,7 +99,7 @@ export default function ArticleSortTabs({
   onSortOrderToggle,
 }: ArticleSortTabsProps) {
   const sortOptions = platform === 'qiita' ? qiitaSortOptions : platform === 'note' ? noteSortOptions : zennSortOptions;
-  const accentColor = platformColors[platform];
+  const accentColor = PLATFORM_META[platform].color;
 
   const getSortOrderLabel = () => {
     if (sortType === 'date') {

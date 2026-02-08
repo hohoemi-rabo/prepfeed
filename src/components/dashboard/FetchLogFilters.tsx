@@ -1,7 +1,8 @@
 'use client';
 
-import { Youtube, Code2, BookOpen, StickyNote } from 'lucide-react';
 import type { Platform, FetchLogStatus } from '@/types/common';
+import { PLATFORM_LIST } from '@/lib/platform-config';
+import type { LucideIcon } from 'lucide-react';
 
 interface FetchLogFiltersProps {
   platform: Platform | '';
@@ -10,12 +11,9 @@ interface FetchLogFiltersProps {
   onStatusChange: (status: FetchLogStatus | '') => void;
 }
 
-const PLATFORM_OPTIONS: { value: Platform | ''; label: string; icon?: typeof Youtube }[] = [
+const PLATFORM_OPTIONS: { value: Platform | ''; label: string; icon?: LucideIcon }[] = [
   { value: '', label: 'すべて' },
-  { value: 'youtube', label: 'YouTube', icon: Youtube },
-  { value: 'qiita', label: 'Qiita', icon: Code2 },
-  { value: 'zenn', label: 'Zenn', icon: BookOpen },
-  { value: 'note', label: 'note', icon: StickyNote },
+  ...PLATFORM_LIST.map((p) => ({ value: p.id as Platform, label: p.label, icon: p.icon })),
 ];
 
 const STATUS_OPTIONS: { value: FetchLogStatus | ''; label: string }[] = [

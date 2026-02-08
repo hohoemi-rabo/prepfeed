@@ -1,27 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { Youtube, Code2, BookOpen, StickyNote, ChevronRight, Plus } from 'lucide-react';
+import { ChevronRight, Plus } from 'lucide-react';
 import type { MonitorSetting } from '@/types/monitor';
-import type { Platform } from '@/types/common';
+import { PLATFORM_META } from '@/lib/platform-config';
 
 interface SettingsCompactListProps {
   settings: MonitorSetting[];
 }
-
-const PLATFORM_ICONS: Record<Platform, typeof Youtube> = {
-  youtube: Youtube,
-  qiita: Code2,
-  zenn: BookOpen,
-  note: StickyNote,
-};
-
-const PLATFORM_COLORS: Record<Platform, string> = {
-  youtube: '#FF0000',
-  qiita: '#55C500',
-  zenn: '#3EA8FF',
-  note: '#41C9B4',
-};
 
 const MAX_DISPLAY = 5;
 
@@ -48,8 +34,7 @@ export default function SettingsCompactList({ settings }: SettingsCompactListPro
         <>
           <div className="space-y-1.5">
             {displaySettings.map((setting) => {
-              const Icon = PLATFORM_ICONS[setting.platform];
-              const color = PLATFORM_COLORS[setting.platform];
+              const { icon: Icon, color } = PLATFORM_META[setting.platform];
 
               return (
                 <div

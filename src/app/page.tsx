@@ -13,35 +13,8 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import SearchBar from '@/components/SearchBar';
-
-type Platform = 'youtube' | 'qiita' | 'zenn' | 'note';
-
-const PLATFORMS = [
-  {
-    id: 'youtube' as Platform,
-    label: 'YouTube',
-    color: '#FF0000',
-    colorDark: '#CC0000',
-  },
-  {
-    id: 'qiita' as Platform,
-    label: 'Qiita',
-    color: '#55C500',
-    colorDark: '#449E00',
-  },
-  {
-    id: 'zenn' as Platform,
-    label: 'Zenn',
-    color: '#3EA8FF',
-    colorDark: '#2B8AD9',
-  },
-  {
-    id: 'note' as Platform,
-    label: 'note',
-    color: '#41C9B4',
-    colorDark: '#2FA898',
-  },
-] as const;
+import { PLATFORM_LIST } from '@/lib/platform-config';
+import type { Platform } from '@/types/common';
 
 export default function Home() {
   const router = useRouter();
@@ -49,7 +22,7 @@ export default function Home() {
   const [keywordQuery, setKeywordQuery] = useState('');
   const [userQuery, setUserQuery] = useState('');
 
-  const current = PLATFORMS.find((p) => p.id === platform)!;
+  const current = PLATFORM_LIST.find((p) => p.id === platform)!;
 
   const handleKeywordSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,7 +63,7 @@ export default function Home() {
           {/* プラットフォームタブ */}
           <div className="flex justify-center mb-8">
             <div className="inline-flex rounded-lg border border-[#e5e5e5] dark:border-[#2a2a2a] bg-white dark:bg-[#1a1a1a] p-1">
-              {PLATFORMS.map((p) => (
+              {PLATFORM_LIST.map((p) => (
                 <button
                   key={p.id}
                   onClick={() => {
