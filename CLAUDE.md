@@ -30,7 +30,7 @@ npm run lint       # Run ESLint
 - **Zustand** - Sort state management
 - **Recharts** - Data visualization (dynamic import)
 - **Supabase** - Auth, PostgreSQL database, RLS
-- **Gemini 3 Flash Preview** - AI分析（簡易分析・詳細分析）
+- **Gemini 3.1 Flash Lite** - AI分析（簡易分析・詳細分析）
 - **Vercel Analytics / OG / KV / Functions** - Analytics, OGP, Caching, Background Jobs
 
 ## Path Aliases

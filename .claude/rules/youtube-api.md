@@ -87,7 +87,7 @@ paths:
 ## Gemini AI Client (`lib/gemini.ts`)
 
 - Singleton pattern — `GeminiClient` class
-- Model: `gemini-3-flash-preview`
+- Model: `gemini-3.1-flash-lite`
 - `generateJSON<T>(prompt)` — JSONレスポンスをパース
 - リトライ: 最大3回、指数バックオフ（1s → 2s → 4s）
 - 429 (rate limit), 503 (server error) でリトライ
