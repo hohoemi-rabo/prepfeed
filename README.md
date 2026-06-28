@@ -61,6 +61,10 @@ KV_REST_API_READ_ONLY_TOKEN=your_kv_rest_api_read_only_token_here
 
 # サイトURL（本番環境）
 NEXT_PUBLIC_SITE_URL=https://your-domain.com
+
+# Vercel Cron 認証用シークレット（バッチ処理・keepalive で使用、本番環境）
+# 生成例: openssl rand -hex 32
+CRON_SECRET=your_cron_secret_here
 ```
 
 ### インストール

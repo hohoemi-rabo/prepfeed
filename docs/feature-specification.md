@@ -303,6 +303,7 @@ AI による詳細分析レポート表示ページ。
 | メソッド | パス | 説明 |
 |---------|------|------|
 | GET | `/api/og` | 動的 OGP 画像生成 (@vercel/og) |
+| GET | `/api/keepalive` | Supabase スリープ防止（Vercel Cron、1日1回、CRON_SECRET認証） |
 
 ---
 

@@ -81,6 +81,7 @@ paths:
 |-------|--------|------|---------|
 | `/api/batch` | POST | `Authorization: Bearer <CRON_SECRET>` | Vercel Cron バッチ処理（全ユーザー） |
 | `/api/batch/manual` | POST | Supabase Auth (cookie) | 手動バッチ（自分の設定のみ） |
+| `/api/keepalive` | GET | `Authorization: Bearer <CRON_SECRET>` | Supabase スリープ防止（軽量 count クエリで DB をピング、Vercel Cron 1日1回 JST 12:00） |
 
 ## Caching Strategy (`lib/cache.ts`)
 
